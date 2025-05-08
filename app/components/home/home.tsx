@@ -5,7 +5,8 @@
  * @format
  */
 
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, memo } from 'react';
+import { API_URL, PHOTO_URL } from '@env';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -25,11 +26,10 @@ interface StudentsListProps {
   navigation: any;
 }
 
-const Home: FC<StudentsListProps> = ({ navigation }): React.JSX.Element => {
+const Home: FC<StudentsListProps> = ({ navigation }) => {
 
   const { loginUser, userCounter } = useSelector((state: any) => state.users);
-  const infoRedux = useSelector((state: any) => state.users);
-  console.log({ infoRedux2: infoRedux });
+  // const infoRedux = useSelector((state: any) => state.users);
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
@@ -47,7 +47,7 @@ const Home: FC<StudentsListProps> = ({ navigation }): React.JSX.Element => {
       dispatch({
         type: 'apiRequest',
         payload: {
-          url: 'http://localhost:3001/api/user/adminInfo',
+          url: `${API_URL}/user/adminInfo`,
           method: 'GET',
           onSuccess: 'users/adminInfo',
           onError: 'GLOBAL_MESSAGE',
@@ -66,12 +66,11 @@ const Home: FC<StudentsListProps> = ({ navigation }): React.JSX.Element => {
         contentContainerStyle={styles.sectionContainer}
         keyboardShouldPersistTaps="handled"
       >
-        {/* <Toast /> */}
         <View>
           <Card
             title={`Welcome, ${loginUser?.firstName} ${loginUser?.lastName}`}
             content={loginUser?.designation}
-            image={`http://localhost:3001/uploads/${loginUser?.profilePhoto}`}
+            image={`${PHOTO_URL}/${loginUser?.profilePhoto}`}
             customStyles={{ backgroundColor: '#F3C623' }}
             customStylesHeading1={{ fontSize: 18, fontWeight: '600', color: '#000' }}
             customStylesHeading2={{ fontSize: 16, fontWeight: '600', color: '#666', marginTop: 4 }}
@@ -95,6 +94,7 @@ const Home: FC<StudentsListProps> = ({ navigation }): React.JSX.Element => {
             />
           </View>
           <StudentsList navigation={navigation} />
+          
           <UsersList navigation={navigation} />
         </View>
       </ScrollView>
@@ -103,63 +103,10 @@ const Home: FC<StudentsListProps> = ({ navigation }): React.JSX.Element => {
 }
 
 const styles = StyleSheet.create({
-  logoWrapper: {
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  logo: {
-    width: 66,
-    height: 58,
-  },
-  heading1: {
-    fontSize: 32,
-    fontWeight: '600',
-    marginBottom: 20,
-    color: '#000',
-  },
-  heading2: {
-    fontSize: 24,
-    fontWeight: '600',
-    marginTop: 20,
-    marginBottom: 20,
-    paddingHorizontal: '5%',
-  },
   sectionContainer: {
     flexGrow: 1,
     padding: '5%',
   },
-  flexContainer: {
-    justifyContent: 'center',
-    alignContent: 'center',
-    minHeight: '100%',
-  },
-  formContainer: {
-    padding: 16,
-    gap: 16,
-  },
-  inputText: {
-    borderWidth: 1,
-    borderColor: '#948979',
-    padding: 10,
-    borderRadius: 16,
-    backgroundColor: 'white',
-    color: 'black',
-    fontSize: 16,
-    fontWeight: '400',
-  },
-  primaryBtn: {
-    backgroundColor: '#10375C',
-    padding: 12,
-    borderRadius: 16,
-    alignItems: 'center',
-  },
-  buttonPressed: {
-    opacity: 0.75,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
 });
 
-export default Home;
+export default memo(Home);

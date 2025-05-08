@@ -2,10 +2,9 @@ import React, { FC, useEffect, useState } from "react";
 import { FlatList, Image, StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../services/store";
-
-import { useRouter } from 'expo-router';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AppText from "../AppText";
+import { API_URL, PHOTO_URL } from '@env';
 
 interface StudentsListProps {
     navigation: any;
@@ -13,10 +12,7 @@ interface StudentsListProps {
 
 const StudentsList: FC<StudentsListProps> = ({ navigation }) => {
 
-    console.log({navigation});
-
     const dispatch = useDispatch<AppDispatch>();
-    const router = useRouter();
     const { students, classes } = useSelector((state: RootState) => state.users) || [];
 
     const [studentList, setStudentList] = useState<any[]>([]);
@@ -36,7 +32,7 @@ const StudentsList: FC<StudentsListProps> = ({ navigation }) => {
         dispatch({
           type: 'apiRequest',
           payload: {
-            url: 'http://localhost:3001/api/user',
+            url: `${API_URL}/user`,
             method: 'POST',
             onSuccess: 'users/getAllStudents',
             onError: 'GLOBAL_MESSAGE',
@@ -76,16 +72,15 @@ const StudentsList: FC<StudentsListProps> = ({ navigation }) => {
                     style={{ width: '100%', borderRadius: 8, borderColor: '#999' }}
                     dropDownContainerStyle={{ width: '100%', borderWidth: 1, borderColor: '#ccc', borderRadius: 8 }}
                 />
-                {/* <AppText>{students?.length} Students from Class {selectedClass}</AppText> */}
             </View>
-            <FlatList
+            {studentList?.length ? <FlatList
                 data={studentList}
                 renderItem={({item}) => {
                     return (
                         <View style={{...styles.infoView}} key={item.id}>
                             <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                                 <Image
-                                    source={{ uri: `http://localhost:3001/uploads/${item.profilePhoto}` }}
+                                    source={{ uri: PHOTO_URL ? `${PHOTO_URL}/${item.profilePhoto}` : `${PHOTO_URL}/default-avatar.png` }}
                                     style={{ ...styles.infoView_image }}
                                 />
                                 <View style={{ maxWidth: '75%' }}>
@@ -94,24 +89,23 @@ const StudentsList: FC<StudentsListProps> = ({ navigation }) => {
                                 </View>
                             </View>
                             <View>
-                                <AppText onPress={() => navigation.navigate('Profile')}>Go1</AppText>
+                                <AppText onPress={() => navigation.navigate('Profile', { id: item.userId })}>Go</AppText>
                             </View>
                         </View>
                     );
                 }}
                 keyExtractor={item => item.id}
-            />
+            /> : <AppText>No result found!</AppText>}
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         backgroundColor: '#fff',
         borderRadius: 8,
-        paddingTop: 20,
-        padding: 16,
+        padding: 20,
+        marginBottom: 24,
     },
     container_title: {
         fontSize: 20,

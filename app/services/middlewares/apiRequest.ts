@@ -131,7 +131,6 @@ const api =
           type: "users/getUserDetail",
           payload: response?.data,
         });
-        return true;
       }
       if(dispatchType === "uploadProfilePhoto") {
         dispatch({

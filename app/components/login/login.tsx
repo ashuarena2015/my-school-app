@@ -17,6 +17,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import { API_URL } from "@env";
 
 import AppText from '../AppText';
 
@@ -45,11 +46,12 @@ const Login:FC<StudentsListProps> = ({ navigation }) => {
 
   const dispatch = useDispatch<AppDispatch>();
 
+  console.log({API_URL});
   const handleSubmit = async () => {
     const response = await dispatch({
       type: 'apiRequest',
       payload: {
-        url: 'http://localhost:3001/api/user/login',
+        url: `${API_URL}/user/login`,
         method: 'POST',
         onError: 'GLOBAL_MESSAGE',
         dispatchType: 'userLogin',
@@ -83,6 +85,7 @@ const Login:FC<StudentsListProps> = ({ navigation }) => {
                 width={200}
               />
             </View>
+            
             <TextInput
               style={styles.inputText}
               autoCapitalize="none"
