@@ -23,6 +23,9 @@ import AppText from '../AppText';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '../../services/store';
 
+// Icons
+import Icon from 'react-native-vector-icons/FontAwesome5';
+
 interface PageProps {
   navigation: any;
 }
@@ -72,9 +75,10 @@ const Login:FC<PageProps> = ({ navigation }) => {
       // style={{ flex: 1 }}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
     >
-      <ScrollView keyboardShouldPersistTaps="handled">
-        <View style={styles.flexContainer}>
-          <View style={styles.formContainer}>
+      <ScrollView style={styles.mainWrpper} keyboardShouldPersistTaps="handled">
+        <View style={styles.formContainer}>
+          <View style={styles.loginContainer}>
+            <AppText style={{ fontSize: 32, lineHeight: 36 }}>Sign in or create an account.</AppText>
             <TextInput
               style={styles.inputText}
               autoCapitalize="none"
@@ -96,11 +100,18 @@ const Login:FC<PageProps> = ({ navigation }) => {
             >
               <AppText style={styles.buttonText}>Login</AppText>
             </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.secondaryBtn}
+              onPress={handleSubmit}
+              activeOpacity={0.8}
+            >
+              <AppText style={styles.buttonText}>Continue with Google</AppText>
+            </TouchableOpacity>
             <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 20 }}>
-              <AppText>Not registered yet?</AppText>
-              <AppText onPress={() => navigation.navigate('Register')}> Create an account.</AppText>
+              <Icon name="fingerprint" size={70} color="#27548A" />;
             </View>
           </View>
+          <AppText>By continuing you agree to Terms of Services and Privacy Policy</AppText>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -108,6 +119,11 @@ const Login:FC<PageProps> = ({ navigation }) => {
 }
 
 const styles = StyleSheet.create({
+  mainWrpper: {
+    height: '100%',
+    width: '100%',
+    padding: 32
+  },
   logoWrapper: {
     alignItems: 'center',
     marginBottom: 20,
@@ -121,20 +137,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 20,
   },
-  tiltedBackground: {
-    position: 'absolute',  // Position it behind the content
-    width: '100%',
-    height: '100%',
-    top: '-45%',
-    backgroundColor: '#89AC46',
-    transform: [
-      { rotate: '-80deg' }  // This rotates the background
-    ],
-  },
-  flexContainer: {
-    margin: 24,
-    borderWidth: 1,
-    borderColor: '#f3f3f3',
+  loginContainer: {
+    marginBottom: 24,
     backgroundColor: '#fff',
     borderRadius: 12,
     shadowColor: '#999',
@@ -142,15 +146,19 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 12,
     paddingTop: 32,
-    padding: 8
+    paddingLeft: 24,
+    paddingRight: 24,
+    paddingBottom: 32,
+    gap: 16
   },
   formContainer: {
-    padding: 16,
-    gap: 16,
+    flex: 1,
+    minHeight: '100%',
+    justifyContent: 'center'
   },
   inputText: {
     borderWidth: 1,
-    borderColor: '#948979',
+    borderColor: '#cacaca',
     padding: 10,
     borderRadius: 12,
     backgroundColor: 'white',
@@ -159,16 +167,25 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
   primaryBtn: {
-    backgroundColor: '#10375C',
-    padding: 8,
+    backgroundColor: '#A4B465',
+    padding: 10,
     borderRadius: 12,
     alignItems: 'center',
+    color: '#fff',
+  },
+  secondaryBtn: {
+    backgroundColor: '#FFF',
+    padding: 10,
+    borderRadius: 12,
+    alignItems: 'center',
+    borderColor: '#cacaca',
+    borderWidth: 1,
+    color: '#999'
   },
   buttonPressed: {
     opacity: 0.75,
   },
   buttonText: {
-    color: '#fff',
     fontSize: 16,
   },
 });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Button } from 'react-native';
+import { View, Text, Button, StyleSheet } from 'react-native';
 
 const WithAuthLayout = (WrappedComponent: React.ComponentType) => {
 
@@ -19,14 +19,22 @@ const WithAuthLayout = (WrappedComponent: React.ComponentType) => {
         </View>
     }
 
-    return (
-      <div className="auth-layout">
-        <WrappedComponent {...props} />
-      </div>
-    );
+    console.log({ isAuthenticated});
+
+    return <View style={styles.layoutContainer}><WrappedComponent {...props} /></View>
   };
 
   return ComponentWithAuthLayout;
 };
+
+const styles = StyleSheet.create({
+  layoutContainer: {
+    paddingTop: 32,
+    backgroundColor: '#000',
+    borderColor: 'red',
+    flex: 1,
+    height: '100%',
+  }
+});
 
 export default WithAuthLayout;

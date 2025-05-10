@@ -19,8 +19,8 @@ import Toast from 'react-native-toast-message';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '../../services/store';
 import Card from '../Card';
-import StudentsList from '../Students/StudentsList';
-import UsersList from '../Users/UsersList';
+// import StudentsList from '../Students/StudentsList';
+// import UsersList from '../Users/UsersList';
 
 interface StudentsListProps {
   navigation: any;
@@ -93,9 +93,9 @@ const Home: FC<StudentsListProps> = ({ navigation }) => {
               customStylesHeading2={{ fontSize: 32, fontWeight: '600', color: '#fff', marginTop: 4 }}
             />
           </View>
-          <StudentsList navigation={navigation} />
+          {/* <StudentsList navigation={navigation} />
           
-          <UsersList navigation={navigation} />
+          <UsersList navigation={navigation} /> */}
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

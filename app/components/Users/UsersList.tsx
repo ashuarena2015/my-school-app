@@ -56,8 +56,6 @@ const UsersList: FC<StudentsListProps> = ({ navigation }) => {
         setItems(getClassesMapItems(roleTypes));
     }, [roleTypes]);
 
-    console.log({roleTypes, userFilter});
-
     return (
         <View style={{ ...styles.container }}>
             <View style={{ marginBottom: 20 }}>
