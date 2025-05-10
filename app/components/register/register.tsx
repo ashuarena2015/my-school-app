@@ -5,24 +5,29 @@
  * @format
  */
 
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
 import {
+  // SafeAreaView,
   Image,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { API_URL } from "@env";
+import AppText from '../AppText';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '../../services/store';
 
-function Register(): React.JSX.Element {
+interface PageProps {
+  navigation: any;
+}
+
+const Register:FC<PageProps> = ({ navigation }) => {
 
   const appBasicInfo = useSelector((state: any) => state.users);
 
@@ -44,11 +49,10 @@ function Register(): React.JSX.Element {
     const response = await dispatch({
       type: 'apiRequest',
       payload: {
-        url: 'http://localhost:3001/api/user/login',
+        url: `${API_URL}/user/login`,
         method: 'POST',
-        onSuccess: 'getLoginDetails',
         onError: 'GLOBAL_MESSAGE',
-        dispatchType: 'getLoginDetails',
+        dispatchType: 'userLogin',
         body: {
           userInfo: {
             email: formInput?.email,
@@ -56,25 +60,31 @@ function Register(): React.JSX.Element {
           }
         }
       },
-    }) as unknown as { isAuth: boolean };
-  }
+    }) as unknown as { isLogin: boolean };
+    if(response?.isLogin) {
+      navigation.navigate('Home');
+    }
+  };
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={{ flex: 1 }}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
     >
       <ScrollView contentContainerStyle={styles.sectionContainer} keyboardShouldPersistTaps="handled">
-        <SafeAreaView style={styles.flexContainer}>
+        <View style={styles.flexContainer}>
           <View style={styles.formContainer}>
-            <Text style={styles.heading1}>{appBasicInfo?.loginUser?.firstName} {appBasicInfo?.loginUser?.lastName}</Text>
+            <AppText style={styles.heading1}>{appBasicInfo?.loginUser?.firstName} {appBasicInfo?.loginUser?.lastName}</AppText>
             <View style={styles.logoWrapper}>
               <Image
                 style={styles.logo}
                 source={require('../../../assets/images/logo.png')}
-                width={200}
+                // width={200}
+                // height={50}
               />
             </View>
+            
             <TextInput
               style={styles.inputText}
               autoCapitalize="none"
@@ -94,11 +104,14 @@ function Register(): React.JSX.Element {
               onPress={handleSubmit}
               activeOpacity={0.8}
             >
-              <Text style={styles.buttonText}>Register</Text>
+              <AppText style={styles.buttonText}>Login</AppText>
             </TouchableOpacity>
-            <Text >Already registered? Login.</Text>
+            <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 20 }}>
+              <AppText>Already registered?</AppText>
+              <AppText onPress={() => navigation.navigate('Login')}> Login.</AppText>
+            </View>
           </View>
-        </SafeAreaView>
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -110,7 +123,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   logo: {
-    width: 66,
+    width: 200,
     height: 58,
   },
   heading1: {
@@ -118,21 +131,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 20,
   },
-  heading2: {
-    fontSize: 24,
-    fontWeight: '600',
-    marginTop: 20,
-    marginBottom: 20,
-    paddingHorizontal: '5%',
-  },
   sectionContainer: {
     flexGrow: 1,
-    padding: '5%',
-    backgroundColor: '#F3C623',
   },
   flexContainer: {
     justifyContent: 'center',
-    alignContent: 'center',
     minHeight: '100%',
   },
   formContainer: {

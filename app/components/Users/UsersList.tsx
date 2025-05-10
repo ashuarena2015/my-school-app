@@ -12,8 +12,6 @@ interface StudentsListProps {
 
 const UsersList: FC<StudentsListProps> = ({ navigation }) => {
 
-    console.log({navigation});
-
     const dispatch = useDispatch<AppDispatch>();
     // const router = useRouter();
     const { users, roleTypes } = useSelector((state: RootState) => state.users) || [];

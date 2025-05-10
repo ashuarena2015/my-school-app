@@ -8,27 +8,26 @@
 import React, { FC, useState } from 'react';
 import {
   // SafeAreaView,
-  Image,
+  // Image,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 import { API_URL } from "@env";
-
 import AppText from '../AppText';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '../../services/store';
 
-interface StudentsListProps {
+interface PageProps {
   navigation: any;
 }
 
-const Login:FC<StudentsListProps> = ({ navigation }) => {
+const Login:FC<PageProps> = ({ navigation }) => {
 
   const appBasicInfo = useSelector((state: any) => state.users);
 
@@ -46,7 +45,6 @@ const Login:FC<StudentsListProps> = ({ navigation }) => {
 
   const dispatch = useDispatch<AppDispatch>();
 
-  console.log({API_URL});
   const handleSubmit = async () => {
     const response = await dispatch({
       type: 'apiRequest',
@@ -71,21 +69,12 @@ const Login:FC<StudentsListProps> = ({ navigation }) => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      style={{ flex: 1 }}
+      // style={{ flex: 1 }}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
     >
-      <ScrollView contentContainerStyle={styles.sectionContainer} keyboardShouldPersistTaps="handled">
+      <ScrollView keyboardShouldPersistTaps="handled">
         <View style={styles.flexContainer}>
           <View style={styles.formContainer}>
-            <AppText style={styles.heading1}>{appBasicInfo?.loginUser?.firstName} {appBasicInfo?.loginUser?.lastName}</AppText>
-            <View style={styles.logoWrapper}>
-              <Image
-                style={styles.logo}
-                source={require('../../../assets/images/logo.png')}
-                width={200}
-              />
-            </View>
-            
             <TextInput
               style={styles.inputText}
               autoCapitalize="none"
@@ -109,7 +98,7 @@ const Login:FC<StudentsListProps> = ({ navigation }) => {
             </TouchableOpacity>
             <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 20 }}>
               <AppText>Not registered yet?</AppText>
-              <AppText onPress={() => navigation.navigate('Home')}> Create an account.</AppText>
+              <AppText onPress={() => navigation.navigate('Register')}> Create an account.</AppText>
             </View>
           </View>
         </View>
@@ -124,7 +113,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   logo: {
-    width: 66,
+    width: 200,
     height: 58,
   },
   heading1: {
@@ -132,12 +121,28 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 20,
   },
-  sectionContainer: {
-    flexGrow: 1,
+  tiltedBackground: {
+    position: 'absolute',  // Position it behind the content
+    width: '100%',
+    height: '100%',
+    top: '-45%',
+    backgroundColor: '#89AC46',
+    transform: [
+      { rotate: '-80deg' }  // This rotates the background
+    ],
   },
   flexContainer: {
-    justifyContent: 'center',
-    minHeight: '100%',
+    margin: 24,
+    borderWidth: 1,
+    borderColor: '#f3f3f3',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    shadowColor: '#999',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    paddingTop: 32,
+    padding: 8
   },
   formContainer: {
     padding: 16,
@@ -147,7 +152,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#948979',
     padding: 10,
-    borderRadius: 16,
+    borderRadius: 12,
     backgroundColor: 'white',
     color: 'black',
     fontSize: 16,
@@ -155,8 +160,8 @@ const styles = StyleSheet.create({
   },
   primaryBtn: {
     backgroundColor: '#10375C',
-    padding: 12,
-    borderRadius: 16,
+    padding: 8,
+    borderRadius: 12,
     alignItems: 'center',
   },
   buttonPressed: {

@@ -4,7 +4,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../services/store";
 import DropDownPicker from 'react-native-dropdown-picker';
 import AppText from "../AppText";
-import { API_URL, PHOTO_URL } from '@env';
+// import { API_URL, PHOTO_URL } from '@env';
+
+const API_URL = 'https://my-school-app-backend.onrender.com/api';
+const PHOTO_URL = 'https://my-school-app-backend.onrender.com/uploads';
 
 interface StudentsListProps {
     navigation: any;

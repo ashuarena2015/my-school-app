@@ -3,9 +3,12 @@ import { StyleSheet, View, Image } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from '../../services/store'
-import { API_URL, PHOTO_URL } from "@env";
+// import { API_URL, PHOTO_URL } from "@env";
 import AppText from '../AppText';
 import SimpleTextSkeleton from '../Skeleton/text-simple';
+
+const API_URL = 'https://my-school-app-backend.onrender.com/api';
+const PHOTO_URL = 'https://my-school-app-backend.onrender.com/uploads';
 
 const Profile: FC = () => {
 

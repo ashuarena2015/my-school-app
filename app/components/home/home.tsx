@@ -5,8 +5,8 @@
  * @format
  */
 
+
 import React, { FC, useEffect, memo } from 'react';
-import { API_URL, PHOTO_URL } from '@env';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -14,7 +14,7 @@ import {
   StyleSheet,
   View
 } from 'react-native';
-
+import { API_URL, PHOTO_URL } from '@env';
 import Toast from 'react-native-toast-message';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '../../services/store';

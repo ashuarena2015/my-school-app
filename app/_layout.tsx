@@ -13,9 +13,10 @@ import {
 import { Provider } from 'react-redux';
 import store from './services/store';
 import { Poppins_400Regular, useFonts } from '@expo-google-fonts/poppins';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createNativeStackNavigator, NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import Home from './components/home/home';
+import MainLayout from './components/MainLayout/MainLayout';
+import Home from './components/home';
 import Login from './components/login/login';
 import Register from './components/register/register';
 import Profile from './components/Profile';
@@ -36,11 +37,12 @@ const RootLayout = () => {
     <Provider store={store}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        style={{ flex: 1 }}
+        style={{ flex: 1, position: 'relative' }}
       >
         <Stack.Navigator
-          initialRouteName="Login"
+          // initialRouteName="Login"
           screenOptions={{
+            headerShown: false,
             headerStyle: {
               backgroundColor: '#143D60', // header background
             },
@@ -49,19 +51,19 @@ const RootLayout = () => {
         >
           <Stack.Screen
             name="Login"
-            component={Login}
+            component={({ navigation }: NativeStackScreenProps<any, 'Login'>) => <MainLayout><Login navigation={navigation} /></MainLayout>}
           />
           <Stack.Screen
             name="Register"
             component={Register}
           />
           <Stack.Screen
-            name="Profile"
-            component={Profile}
-          />
-          <Stack.Screen
             name="Home"
             component={Home}
+          />
+          <Stack.Screen
+            name="Profile"
+            component={Profile}
           />
         </Stack.Navigator>
       </KeyboardAvoidingView>
