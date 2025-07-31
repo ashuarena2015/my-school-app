@@ -78,7 +78,8 @@ const usersSlice = createSlice({
         state.currentUser.profilePhoto = action.payload.photoUrl;
       }
     },
-    adminInfo: (state, action) => {
+    schoolGeneralInfo: (state, action) => {
+      console.log('School general info received:', action.payload);
       state.userCounter = action.payload.userCounter;
       state.permissionOptions = action.payload.permissions;
       state.branches = action.payload.branches;
@@ -97,6 +98,6 @@ const usersSlice = createSlice({
 });
 
 // Export actions & reducer
-export const { getUsers, isLoading, getLoginDetails, logoutUser, getUserDetail, uploadProfilePhoto, getAllStudents } =
+export const { getUsers, isLoading, getLoginDetails, logoutUser, getUserDetail, uploadProfilePhoto, getAllStudents, schoolGeneralInfo } =
   usersSlice.actions;
 export default usersSlice.reducer;

@@ -1,17 +1,24 @@
 import React, { FC } from 'react';
-import { useSelector } from 'react-redux';
 import Home from './home';
 import WithAuthLayout from '../HOC/WithAuth';
-import { RootState } from '@/app/services/reducers';
 
 interface HomePageProps {
     navigation?: object;
+    route?: object;
+    loginUser?: {
+        email?: string;
+        firstName?: string;
+        lastName?: string;
+        designation?: string;
+        profilePhoto?: string;
+    }; // Adjust type as needed
 }
 
-const HomePageAuth = WithAuthLayout((props: HomePageProps) => <Home {...props} navigation={props?.navigation} />);
+const HomePageAuth = WithAuthLayout((props: HomePageProps) => <Home navigation={props?.navigation} loginUser={props?.loginUser || {}} />);
 
-const HomePage: FC<HomePageProps> = ({ navigation }) => {
-    const { loginUser } = useSelector((state: RootState) => state.users);
+const HomePage: FC<HomePageProps> = ({ navigation, loginUser }) => {
+    console.log("HomePage navigation", navigation);
+    console.log("HomePage loginUser", loginUser);
     return (
         <HomePageAuth navigation={navigation} loginUser={loginUser} />
     )

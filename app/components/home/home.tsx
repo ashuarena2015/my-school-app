@@ -6,34 +6,48 @@
  */
 
 
-import React, { FC, useEffect, memo } from 'react';
+import React, { FC, useEffect } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
-  View
+  View,
+  Image
 } from 'react-native';
-import { API_URL, PHOTO_URL } from '@env';
+
+// @ts-ignore
+// eslint-disable-next-line import/no-unresolved
+import { PHOTO_URL } from '@env';
+import Icon from "react-native-vector-icons/FontAwesome5";
+
 import Toast from 'react-native-toast-message';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch } from '../../services/store';
+import { useSelector } from 'react-redux';
 import Card from '../Card';
-// import StudentsList from '../Students/StudentsList';
-// import UsersList from '../Users/UsersList';
+
+import UsersList from '../Users/UsersList';
+import AppText from '../AppText';
 
 interface StudentsListProps {
   navigation: any;
+  loginUser: {
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    designation?: string;
+    profilePhoto?: string;
+  }
 }
 
-const Home: FC<StudentsListProps> = ({ navigation }) => {
+const Home: FC<StudentsListProps> = ({ navigation, loginUser }) => {
 
-  const { loginUser, userCounter } = useSelector((state: any) => state.users);
-  // const infoRedux = useSelector((state: any) => state.users);
-  const dispatch = useDispatch<AppDispatch>();
+  const { userCounter } = useSelector((state: any) => state.users);
+
+  console.log({loginUser});
 
   useEffect(() => {
     if (!loginUser?.email) {
+      console.log('User not authenticated, redirecting to login');
       navigation.navigate('Login');
     } else {
       Toast.show({
@@ -42,19 +56,6 @@ const Home: FC<StudentsListProps> = ({ navigation }) => {
       });
     }
   }, [loginUser?.email, navigation]);
-
-    useEffect(() => {
-      dispatch({
-        type: 'apiRequest',
-        payload: {
-          url: `${API_URL}/user/adminInfo`,
-          method: 'GET',
-          onSuccess: 'users/adminInfo',
-          onError: 'GLOBAL_MESSAGE',
-          dispatchType: 'adminInfo',
-        },
-      });
-    }, [dispatch]);
 
   return (
     <KeyboardAvoidingView
@@ -65,37 +66,40 @@ const Home: FC<StudentsListProps> = ({ navigation }) => {
       <ScrollView
         contentContainerStyle={styles.sectionContainer}
         keyboardShouldPersistTaps="handled"
+        scrollEnabled={false}
       >
         <View>
-          <Card
-            title={`Welcome, ${loginUser?.firstName} ${loginUser?.lastName}`}
-            content={loginUser?.designation}
-            image={`${PHOTO_URL}/${loginUser?.profilePhoto}`}
-            customStyles={{ backgroundColor: '#F3C623' }}
-            customStylesHeading1={{ fontSize: 18, fontWeight: '600', color: '#000' }}
-            customStylesHeading2={{ fontSize: 16, fontWeight: '600', color: '#666', marginTop: 4 }}
-          />
+          <View style={styles.profileInfoContainer}>
+            <Image
+              style={styles.profileImage}
+              source={{ uri: `${PHOTO_URL}/${loginUser?.profilePhoto}` }}
+            />
+            <View>
+              <AppText>Good morning!</AppText>
+              <AppText style={{ fontSize: 20, fontWeight: 'bold' }}>{`Welcome, ${loginUser?.firstName} ${loginUser?.lastName}`}</AppText>
+            </View>
+          </View>
           <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', gap: 4 }}>
             <Card
               title="Students"
               content={userCounter?.students}
-              image=""
+              image={''}
+              icon={<Icon name="graduation-cap" size={24} color="#fff" />}
               customStyles={{ backgroundColor: '#183B4E', width: '48%'}}
               customStylesHeading1={{ fontSize: 16, fontWeight: '600', color: '#fff' }}
-              customStylesHeading2={{ fontSize: 32, fontWeight: '600', color: '#fff', marginTop: 4 }}
+              customStylesHeading2={{ fontSize: 32, fontWeight: '600', color: '#fff' }}
             />
             <Card
-              title="Staffs"
-              content={userCounter?.teachers}
+              title="Admins"
+              content={parseFloat(userCounter?.teachers + userCounter?.staffs + userCounter?.head_principals + userCounter?.head_teachers + userCounter?.principals || 0).toFixed(0)}
               image=""
+              icon={<Icon name="user-shield" size={24} color="#fff" />}
               customStyles={{ backgroundColor: '#27548A', width: '48%'}}
               customStylesHeading1={{ fontSize: 16, fontWeight: '600', color: '#fff' }}
-              customStylesHeading2={{ fontSize: 32, fontWeight: '600', color: '#fff', marginTop: 4 }}
+              customStylesHeading2={{ fontSize: 32, fontWeight: '600', color: '#fff' }}
             />
           </View>
-          {/* <StudentsList navigation={navigation} />
-          
-          <UsersList navigation={navigation} /> */}
+          <UsersList navigation={navigation} />
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -105,8 +109,20 @@ const Home: FC<StudentsListProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
   sectionContainer: {
     flexGrow: 1,
-    padding: '5%',
+  },
+  profileInfoContainer: {
+    padding: 8,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  profileImage: {
+    width: 56,
+    height: 56,
+    borderRadius: 56,
+    marginRight: 10,
   },
 });
 
-export default memo(Home);
+export default Home;

@@ -1,27 +1,23 @@
-import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, StyleSheet } from 'react-native';
 
 const WithAuthLayout = (WrappedComponent: React.ComponentType) => {
-
   const ComponentWithAuthLayout = (props: any) => {
-
     const { navigation, loginUser } = props;
     const isAuthenticated = loginUser?.email;
 
-    const goToLogin = () => {
+    useEffect(() => {
+      if (!isAuthenticated) {
         navigation.navigate('Login');
-    }
+      }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isAuthenticated]);
 
-    if (!isAuthenticated) {
-        return <View>
-            <Text>You can not access this page.</Text>
-            <Button title="Login" onPress={goToLogin} />
-        </View>
-    }
-
-    console.log({ isAuthenticated});
-
-    return <View style={styles.layoutContainer}><WrappedComponent {...props} /></View>
+    return (
+      <View style={styles.layoutContainer}>
+        <WrappedComponent {...props} />
+      </View>
+    );
   };
 
   return ComponentWithAuthLayout;
@@ -29,12 +25,15 @@ const WithAuthLayout = (WrappedComponent: React.ComponentType) => {
 
 const styles = StyleSheet.create({
   layoutContainer: {
-    paddingTop: 32,
-    backgroundColor: '#000',
-    borderColor: 'red',
+    padding: 16,
     flex: 1,
     height: '100%',
-  }
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export default WithAuthLayout;

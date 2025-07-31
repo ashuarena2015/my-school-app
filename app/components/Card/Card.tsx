@@ -10,9 +10,10 @@ interface CardProps {
     customStyles: object;
     customStylesHeading1?: object;
     customStylesHeading2?: object;
+    icon: React.ReactNode;
 }
 
-const Card: FC<CardProps> = ({ title, content, image, customStyles, customStylesHeading1, customStylesHeading2 }) => {
+const Card: FC<CardProps> = ({ title, content, image, customStyles, customStylesHeading1, customStylesHeading2, icon }) => {
 
     const viewStyles = image ? { ...styles.card, ...customStyles, ...styles.card_flex } : { ...styles.card, ...customStyles };
 
@@ -27,8 +28,11 @@ const Card: FC<CardProps> = ({ title, content, image, customStyles, customStyles
                 alt={title}
             /> : null}
             <View>
-                <AppText style={{...customStylesHeading1}}>{title}</AppText>
                 <AppText style={{...customStylesHeading2}}>{content}</AppText>
+                <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                    {icon}
+                    <AppText style={{...customStylesHeading1, marginLeft: 8 }}>{title}</AppText>
+                </View>
             </View>
         </View>
     );

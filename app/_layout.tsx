@@ -1,74 +1,39 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React from "react";
+import { View, Platform, KeyboardAvoidingView } from "react-native";
+import { Provider } from "react-redux";
+import { NavigationContainer } from "@react-navigation/native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-import React from 'react';
-import {
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native';
-import { Provider } from 'react-redux';
-import store from './services/store';
-import { Poppins_400Regular, useFonts } from '@expo-google-fonts/poppins';
-import { createNativeStackNavigator, NativeStackScreenProps } from '@react-navigation/native-stack';
+import store from "./services/store";
+import { Poppins_400Regular, useFonts } from "@expo-google-fonts/poppins";
 
-import MainLayout from './components/MainLayout/MainLayout';
-import Home from './components/home';
-import Login from './components/login/login';
-import Register from './components/register/register';
-import Profile from './components/Profile';
-
-const Stack = createNativeStackNavigator();
+import ScreenWrapper from "./ScreenWrapper";
 
 const RootLayout = () => {
-
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
   });
 
   if (!fontsLoaded) {
-    return <>Loading</>; // or a custom loading screen
+    return <>Loading</>;
   }
 
   return (
-    <Provider store={store}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        style={{ flex: 1, position: 'relative' }}
-      >
-        <Stack.Navigator
-          // initialRouteName="Login"
-          screenOptions={{
-            headerShown: false,
-            headerStyle: {
-              backgroundColor: '#143D60', // header background
-            },
-            headerTintColor: '#ffffff', // header text color
-          }}
-        >
-          <Stack.Screen
-            name="Login"
-            component={({ navigation }: NativeStackScreenProps<any, 'Login'>) => <MainLayout><Login navigation={navigation} /></MainLayout>}
-          />
-          <Stack.Screen
-            name="Register"
-            component={Register}
-          />
-          <Stack.Screen
-            name="Home"
-            component={Home}
-          />
-          <Stack.Screen
-            name="Profile"
-            component={Profile}
-          />
-        </Stack.Navigator>
-      </KeyboardAvoidingView>
-    </Provider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Provider store={store}>
+        <NavigationContainer>
+          <View style={{ flex: 1 }}>
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : undefined}
+              style={{ flex: 1 }}
+            >
+              <ScreenWrapper />
+            </KeyboardAvoidingView>
+          </View>
+        </NavigationContainer>
+      </Provider>
+    </GestureHandlerRootView>
   );
-}
+};
 
 export default RootLayout;

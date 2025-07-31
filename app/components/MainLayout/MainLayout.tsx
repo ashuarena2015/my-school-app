@@ -1,35 +1,30 @@
-import React, { ReactNode } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React from "react";
+import { ScrollView, View, StyleSheet } from "react-native";
 
-const MainLayout = ({ children }: { children: ReactNode }) => {
-    return (
-        <View style={styles.sectionContainer}>
-            <View style={{ position: 'relative', zIndex: 2 }}>
-                {children}
-            </View>
-            <View style={styles.tiltedBackground} />
-        </View>
-    )
-}
+const MainLayout = ({
+  children,
+  
+}: {
+  children: React.ReactNode;
+  navigation: any;
+  route: any;
+}) => {
+
+  return (
+    <ScrollView contentContainerStyle={styles.scroll}>
+      <View style={styles.container}>{children}</View>
+    </ScrollView>
+  );
+};
 
 const styles = StyleSheet.create({
-    sectionContainer: {
-        flexGrow: 1,
-        backgroundColor: '#FFF',
-        flex: 1,
-        height: '100%',
-    },
-    tiltedBackground: {
-      position: 'absolute',
-      zIndex: 1,
-      width: '200%',
-      height: '100%',
-      top: '-35%',
-      backgroundColor: '#27445D',
-      transform: [
-        { rotate: '-80deg' }
-      ],
-    },
+  scroll: {
+    flexGrow: 1,
+  },
+  container: {
+    flex: 1,
+    padding: 16,
+  },
 });
 
 export default MainLayout;

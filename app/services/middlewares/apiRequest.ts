@@ -61,6 +61,7 @@ const api =
         
       }
       if (dispatchType === "userLogin") {
+        console.log('response?.data', response?.data);
         dispatch({
           type: "global/globalMessage",
           payload: {
@@ -74,9 +75,9 @@ const api =
             user: response?.data?.user,
           },
         });
-        return { isLogin: response?.data?.user?.email !== '' };
+        return { isLogin: response?.data?.user?.isVerified, isNewUser: response?.data?.isNewUser };
       }
-      if (dispatchType === "getLoginDetails") {
+      if (dispatchType === "getLoginDetails" || dispatchType === "authLogin") {
         dispatch({
           type: "users/getLoginDetails",
           payload: {
@@ -90,6 +91,13 @@ const api =
           type: "users/getLoginDetails",
           payload: {
             user: {},
+          },
+        });
+        dispatch({
+          type: "global/globalMessage",
+          payload: {
+            message: "You logged out successfully.",
+            type: "success",
           },
         });
         return { isLogout: true };
@@ -139,9 +147,10 @@ const api =
         });
         return true;
       }
-      if(dispatchType === "adminInfo") {
+      if(dispatchType === "schoolGeneralInfo") {
+        console.log('Dispatching school general info:', response?.data);
         dispatch({
-          type: "users/adminInfo",
+          type: "users/schoolGeneralInfo",
           payload: {
             userCounter: response?.data?.counter,
             branches: response?.data?.branches,
