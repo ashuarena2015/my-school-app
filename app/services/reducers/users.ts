@@ -26,6 +26,9 @@ interface UsersState {
   subjectsClasses: any[];
   classTeachers: any[];
   birthdays: any[];
+  userListTypeSelected: string | null;
+  notifications: any[];
+  isNewNotification: boolean
 }
 
 // Initial state with TypeScript
@@ -44,7 +47,10 @@ const initialState: UsersState = {
   classes: [],
   subjectsClasses: [],
   classTeachers: [],
-  birthdays: []
+  birthdays: [],
+  userListTypeSelected: '',
+  notifications: [],
+  isNewNotification: false
 };
 
 // Create slice with TypeScript
@@ -64,8 +70,9 @@ const usersSlice = createSlice({
     logoutUser: (state) => {
       state.loginUser = {};
     },
-    getAllUsers: (state, action: PayloadAction<{ users: User[] }>) => {
+    getAllUsers: (state, action: PayloadAction<{ users: User[], userListTypeSelected: string }>) => {
       state.users = action.payload.users;
+      state.userListTypeSelected = action.payload.userListTypeSelected || null;
     },
     getAllStudents: (state, action: PayloadAction<{ students: User[] }>) => {
       state.students = action.payload.students;
@@ -79,7 +86,6 @@ const usersSlice = createSlice({
       }
     },
     schoolGeneralInfo: (state, action) => {
-      console.log('School general info received:', action.payload);
       state.userCounter = action.payload.userCounter;
       state.permissionOptions = action.payload.permissions;
       state.branches = action.payload.branches;
@@ -87,17 +93,22 @@ const usersSlice = createSlice({
       state.classes = action.payload.classes;
       state.subjectsClasses = action.payload.subjects;
       state.birthdays = action.payload.birthdays;
+      state.notifications = action.payload.notifications || [];
     },
     getPermissions: (state, action) => {
       state.permissionOptions = action.payload;
     },
     getClassTeachers: (state, action) => {
       state.classTeachers = action.payload || []
-    }
+    },
+    getNotifications: (state, action) => {
+      console.log("Notifications:", action.payload);
+      state.isNewNotification = action.payload || false;
+    },
   },
 });
 
 // Export actions & reducer
-export const { getUsers, isLoading, getLoginDetails, logoutUser, getUserDetail, uploadProfilePhoto, getAllStudents, schoolGeneralInfo } =
+export const { getUsers, isLoading, getLoginDetails, logoutUser, getUserDetail, uploadProfilePhoto, getAllStudents, schoolGeneralInfo, getNotifications } =
   usersSlice.actions;
 export default usersSlice.reducer;

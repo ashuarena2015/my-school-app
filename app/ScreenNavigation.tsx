@@ -6,22 +6,26 @@ import { createStackNavigator } from "@react-navigation/stack";
 // @ts-ignore
 // eslint-disable-next-line import/no-unresolved
 import { PHOTO_URL } from '@env';
+
+import MainLayout from "./components/MainLayout/MainLayout";
+
 import Home from "./components/home";
 import Login from "./components/login";
-import Profile from "./components/Profile";
 import Logout from "./components/Logout";
+import Notifications from "./components/Notifications";
+
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
 interface ScreenNavigationProps {
   loginUser?: any; // Adjust type as needed
+  isNotification?: boolean;
 }
 
 // Your custom user component in the drawer
 const CustomDrawerContent = (props: DrawerContentComponentProps & { loginUser?: any }) => {
   const { loginUser } = props;
-  console.log("CustomDrawerContent props", props);
   return (
     <DrawerContentScrollView {...props}>
       {/* User Info Section */}
@@ -40,32 +44,51 @@ const CustomDrawerContent = (props: DrawerContentComponentProps & { loginUser?: 
   );
 }
 
-const ScreenHeader = ({ loginUser }: { loginUser?: any }) => (
+const ScreenHeader = ({ loginUser, isNotification }: { loginUser?: any, isNotification?: boolean }) => (
   <View style={styles.headerInfoContainer}>
     <Image
       source={{ uri: `${PHOTO_URL}/${loginUser?.profilePhoto}` }}
       style={styles.avatarHeader}
     />
-    {/* <Text style={{ fontWeight: 'bold' }}>{`${loginUser?.firstName} ${loginUser?.lastName}`}</Text> */}
+    {isNotification ? <View style={styles.notification_dot}></View> : null}
   </View>
 );
 
-const AuthenticatedDrawer:FC<ScreenNavigationProps> = ({ loginUser }) => (
+const AuthenticatedDrawer:FC<ScreenNavigationProps> = ({ loginUser, isNotification }) => (
   <Drawer.Navigator
     initialRouteName="Home"
     drawerContent={(props) => <CustomDrawerContent {...props} loginUser={loginUser} />}
   >
     <Drawer.Screen
       name="Home"
-      component={() => <Home loginUser={loginUser} />}
+      component={({ navigation, route }: { navigation: any; route: any }) => (
+        <MainLayout navigation={navigation} route={route}>
+          <Home loginUser={loginUser} />
+        </MainLayout>
+      )}
       options={{
         headerTitle: () => (
-          ScreenHeader({ loginUser })
+          ScreenHeader({ loginUser, isNotification })
         ),
-        headerStyle: { ...styles.headerInfoContainer },
+        headerTitleAlign: 'left',
+        headerStyle: { backgroundColor: '#463a69' },
+        headerTintColor: '#fff',
+        headerTitleStyle: { fontWeight: 'bold' },
       }}
     />
-    <Drawer.Screen name="Profile" component={Profile} />
+    <Drawer.Screen
+      name="Notifications"
+      component={Notifications}
+      options={{
+        headerTitle: () => (
+          ScreenHeader({ loginUser, isNotification })
+        ),
+        headerTitleAlign: 'left',
+        headerStyle: { backgroundColor: '#463a69' },
+        headerTintColor: '#fff',
+        headerTitleStyle: { fontWeight: 'bold' },
+      }}
+    />
     <Drawer.Screen name="Logout" component={() => <Logout navigation={{ navigate: (screen: string) => console.log(`Navigating to ${screen}`) }} />} />
   </Drawer.Navigator>
 );
@@ -78,21 +101,22 @@ const AuthStack = () => (
   </Stack.Navigator>
 );
 
-const ScreenNavigation: FC<ScreenNavigationProps> = ({ loginUser }) => {
+const ScreenNavigation: FC<ScreenNavigationProps> = ({ loginUser, isNotification }) => {
 
   const isAuthenticated = !!loginUser?.email;
 
   return (
-    isAuthenticated ? <AuthenticatedDrawer loginUser={loginUser} /> : <AuthStack />
+    isAuthenticated ? <AuthenticatedDrawer loginUser={loginUser} isNotification={isNotification} /> : <AuthStack />
   );
 };
 
 const styles = StyleSheet.create({
   userSection: {
     padding: 20,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#FFE57F",
     marginBottom: 10,
     alignItems: "center",
+    borderRadius: 8,
   },
   avatar: {
     width: 80,
@@ -111,18 +135,29 @@ const styles = StyleSheet.create({
   headerInfoContainer: {
     display: 'flex',
     flexDirection: 'row',
+    alignItems: 'flex-end',
     justifyContent: 'flex-end',
     backgroundColor: '#463a69',
     color: '#fff',
-    minWidth: '100%',
+    width: '100%',
     marginBottom: 8,
     flex: 1,
+    alignSelf: 'stretch',
   },
   avatarHeader: {
     width: 32,
     height: 32,
     borderRadius: 20,
     marginRight: 10,
+  },
+  notification_dot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: 'red',
+    position: 'absolute',
+    top: 0,
+    right: 5,
   },
 });
 

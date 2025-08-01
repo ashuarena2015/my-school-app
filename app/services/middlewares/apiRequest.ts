@@ -61,7 +61,6 @@ const api =
         
       }
       if (dispatchType === "userLogin") {
-        console.log('response?.data', response?.data);
         dispatch({
           type: "global/globalMessage",
           payload: {
@@ -115,7 +114,8 @@ const api =
         dispatch({
           type: "users/getAllUsers",
           payload: {
-            users: response?.data?.users
+            users: response?.data?.users,
+            userListTypeSelected: body?.designation || null,
           },
         });
         return true;
@@ -148,7 +148,6 @@ const api =
         return true;
       }
       if(dispatchType === "schoolGeneralInfo") {
-        console.log('Dispatching school general info:', response?.data);
         dispatch({
           type: "users/schoolGeneralInfo",
           payload: {
@@ -159,6 +158,7 @@ const api =
             classes: response?.data?.classes,
             subjects: response?.data?.subjects,
             birthdays: response?.data?.getBirthDayInMonth,
+            notifications: response?.data?.notifications
           }
         });
         return true;

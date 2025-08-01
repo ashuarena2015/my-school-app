@@ -60,6 +60,7 @@ const Login: FC<PageProps> = ({ navigation, route }) => {
         roleTypes.map((role: any) => ({
           label: role.label,
           value: role.key,
+          key: role.key,
         }))
       );
     }
@@ -71,6 +72,7 @@ const Login: FC<PageProps> = ({ navigation, route }) => {
         branches.map((branch: any) => ({
           label: branch.branch,
           value: branch._id,
+          key: branch._id,
         }))
       );
     }
@@ -104,7 +106,6 @@ const Login: FC<PageProps> = ({ navigation, route }) => {
         },
       },
     })) as unknown as { isLogin: boolean; isNewUser: boolean };
-    console.log({ response });
     if (response?.isNewUser) {
       setOtpVerifyForm(true);
     }

@@ -10,7 +10,6 @@ interface LoginPageProps {
 const LoginPageAuth = WithAuthLayout((props: LoginPageProps) => <Login navigation={props?.navigation} route={props?.route || {}} />);
 
 const LoginPage: FC<LoginPageProps> = ({ navigation, route }) => {
-    console.log("LoginPage navigation", navigation);
     return (
         <LoginPageAuth navigation={navigation} route={route} />
     )

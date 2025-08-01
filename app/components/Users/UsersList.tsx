@@ -1,11 +1,12 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useState, useCallback, useMemo } from "react";
 import { ScrollView, FlatList, Image, StyleSheet, View } from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome5";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../services/store";
-
-import DropDownPicker from "react-native-dropdown-picker";
 import AppText from "../AppText";
+
+import UserTypeDropdown from "./UserType";
 
 // @ts-ignore
 // eslint-disable-next-line import/no-unresolved
@@ -16,9 +17,12 @@ interface StudentsListProps {
 }
 
 const UsersList: FC<StudentsListProps> = ({ navigation }) => {
+
+  console.log('UsersList component rendered');
+
   const dispatch = useDispatch<AppDispatch>();
   // const router = useRouter();
-  const { users, roleTypes } =
+  const { users, roleTypes, userListTypeSelected } =
     useSelector((state: RootState) => state.users) || [];
 
   const [userList, setUserList] = useState<any[]>([]);
@@ -27,17 +31,13 @@ const UsersList: FC<StudentsListProps> = ({ navigation }) => {
     return roles.map((item) => ({
       label: item.label,
       value: item.key,
+      key: item.key
     }));
   };
-  const [open, setOpen] = useState(false);
-  const [selectedClass, setSelectedClass] = useState("");
-
-  const [userFilter, setUserFilter] = useState("");
-  const [items, setItems] = useState([
-    { label: "Head Principal", value: "head_principal" },
-  ]);
-
-  const fetchAllUsers = async () => {
+  const [valueUser, setValueUser] = useState<string | null>('');
+  
+  const fetchAllUsers = useCallback(async () => {
+    console.log("Fetching all users with valueUser:", valueUser);
     await dispatch({
       type: "apiRequest",
       payload: {
@@ -48,63 +48,51 @@ const UsersList: FC<StudentsListProps> = ({ navigation }) => {
         dispatchType: "getAllUsers",
         body: {
           userAll: 1,
-          designation: "",
+          designation: valueUser || "",
         },
       },
     });
-  };
+  }, [dispatch, valueUser]);
 
+  // Call only when valueUser changes
   useEffect(() => {
-    !users?.length && fetchAllUsers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (!users?.length || valueUser) {
+      fetchAllUsers();
+    }
+  }, [users, fetchAllUsers, valueUser]);
+
+  // Sync Redux to local list
+  useEffect(() => {
+    if (users?.length) {
+      setUserList(users);
+    }
   }, [users]);
 
-  useEffect(() => {
-    users?.length && setUserList(users);
-  }, [users]);
-
-  useEffect(() => {
-    setItems(getClassesMapItems(roleTypes));
-  }, [roleTypes]);
+  const getItems = useCallback(() => getClassesMapItems(roleTypes), [roleTypes]);
 
   return (
     <SafeAreaProvider>
       <SafeAreaView edges={["top"]}>
-          <View style={{ ...styles.container }}>
-            <View style={{ marginBottom: 20 }}>
-              <AppText style={{ ...styles.container_title }}>
-                {users?.length} Users
-              </AppText>
-              <DropDownPicker
-                open={open}
-                value={userFilter}
-                items={items}
-                setOpen={setOpen}
-                setValue={setUserFilter}
-                setItems={setItems}
-                listMode="MODAL"
-                placeholder="All users"
-                modalTitle="Select user"
-                modalProps={{
-                  animationType: "slide",
-                  presentationStyle: "formSheet",
-                }}
-                style={{ width: "100%", borderRadius: 8, borderColor: "#999" }}
-                dropDownContainerStyle={{
-                  width: "100%",
-                  borderWidth: 1,
-                  borderColor: "#ccc",
-                  borderRadius: 8,
-                }}
-              />
-            </View>
-            <ScrollView
-              scrollEnabled={true}
-              contentContainerStyle={{ flexGrow: 1, padding: 0, maxHeight: 320 }}
-              keyboardShouldPersistTaps="handled"
-            >
+        <View style={{ ...styles.container }}>
+          <View style={{ marginBottom: 20 }}>
+            <AppText style={{ ...styles.container_title }}>
+              {users?.length} Users
+            </AppText>
+            <UserTypeDropdown
+              valueUser={valueUser || userListTypeSelected}
+              items={getItems()}
+              setValueUser={setValueUser}
+            />
+          </View>
+          <ScrollView
+            scrollEnabled={true}
+            contentContainerStyle={{ flexGrow: 1, padding: 0, maxHeight: 320 }}
+            keyboardShouldPersistTaps="handled"
+          >
             <FlatList
               data={userList}
+              // scrollEnabled={false}
+              keyExtractor={(item, index) => item.id?.toString() ?? index.toString()}
               renderItem={({ item }) => {
                 return (
                   <View style={{ ...styles.infoView }} key={item.id}>
@@ -116,33 +104,40 @@ const UsersList: FC<StudentsListProps> = ({ navigation }) => {
                       }}
                     >
                       <Image
-                        source={{ uri: `${PHOTO_URL}/${item.profilePhoto || 'default-avatar.png'}` }}
+                        source={{
+                          uri: `${PHOTO_URL}/${
+                            item.profilePhoto || "default-avatar.png"
+                          }`,
+                        }}
                         style={{ ...styles.infoView_image }}
                       />
-                      <View style={{ maxWidth: "75%" }}>
+                      <View style={{ maxWidth: "80%" }}>
                         <AppText
                           onPress={() => alert("hi")}
                           style={{ ...styles.full_name }}
                         >
                           {item.firstName} {item.lastName}
                         </AppText>
-                        <AppText style={{ ...styles.sub_info }}>
+                        <AppText
+                          style={{ ...styles.sub_info }}
+                          numberOfLines={1}
+                        >
                           #{item.userId}, {item.email}
                         </AppText>
                       </View>
                     </View>
-                    <View>
+                    {/* <View>
                       <AppText onPress={() => navigation.navigate("Profile")}>
-                        Go1
+                        Go
                       </AppText>
-                    </View>
+                    </View> */}
+                    <Icon name="arrow-right" size={16} color="#333" />
                   </View>
                 );
               }}
-              keyExtractor={(item) => item.id}
             />
-            </ScrollView>
-          </View>
+          </ScrollView>
+        </View>
       </SafeAreaView>
     </SafeAreaProvider>
   );
@@ -172,12 +167,15 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   full_name: {
-    fontSize: 18,
+    fontSize: 16,
     color: "#333",
   },
   sub_info: {
     fontSize: 14,
     color: "#666",
+    width: 200,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
   },
   infoView_image: {
     width: 50,

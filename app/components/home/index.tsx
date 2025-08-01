@@ -17,8 +17,6 @@ interface HomePageProps {
 const HomePageAuth = WithAuthLayout((props: HomePageProps) => <Home navigation={props?.navigation} loginUser={props?.loginUser || {}} />);
 
 const HomePage: FC<HomePageProps> = ({ navigation, loginUser }) => {
-    console.log("HomePage navigation", navigation);
-    console.log("HomePage loginUser", loginUser);
     return (
         <HomePageAuth navigation={navigation} loginUser={loginUser} />
     )

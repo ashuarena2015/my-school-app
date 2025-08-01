@@ -25,7 +25,7 @@ import Toast from 'react-native-toast-message';
 import { useSelector } from 'react-redux';
 import Card from '../Card';
 
-import UsersList from '../Users/UsersList';
+// import UsersList from '../Users/UsersList';
 import AppText from '../AppText';
 
 interface StudentsListProps {
@@ -43,11 +43,8 @@ const Home: FC<StudentsListProps> = ({ navigation, loginUser }) => {
 
   const { userCounter } = useSelector((state: any) => state.users);
 
-  console.log({loginUser});
-
   useEffect(() => {
     if (!loginUser?.email) {
-      console.log('User not authenticated, redirecting to login');
       navigation.navigate('Login');
     } else {
       Toast.show({
@@ -85,7 +82,7 @@ const Home: FC<StudentsListProps> = ({ navigation, loginUser }) => {
               content={userCounter?.students}
               image={''}
               icon={<Icon name="graduation-cap" size={24} color="#fff" />}
-              customStyles={{ backgroundColor: '#183B4E', width: '48%'}}
+              customStyles={{ backgroundColor: '#A1887F', width: '48%'}}
               customStylesHeading1={{ fontSize: 16, fontWeight: '600', color: '#fff' }}
               customStylesHeading2={{ fontSize: 32, fontWeight: '600', color: '#fff' }}
             />
@@ -94,12 +91,12 @@ const Home: FC<StudentsListProps> = ({ navigation, loginUser }) => {
               content={parseFloat(userCounter?.teachers + userCounter?.staffs + userCounter?.head_principals + userCounter?.head_teachers + userCounter?.principals || 0).toFixed(0)}
               image=""
               icon={<Icon name="user-shield" size={24} color="#fff" />}
-              customStyles={{ backgroundColor: '#27548A', width: '48%'}}
+              customStyles={{ backgroundColor: '#78909C', width: '48%'}}
               customStylesHeading1={{ fontSize: 16, fontWeight: '600', color: '#fff' }}
               customStylesHeading2={{ fontSize: 32, fontWeight: '600', color: '#fff' }}
             />
           </View>
-          <UsersList navigation={navigation} />
+          {/* <UsersList navigation={navigation} /> */}
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

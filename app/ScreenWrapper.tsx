@@ -3,16 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 // @ts-ignore
 // eslint-disable-next-line import/no-unresolved
 import { API_URL } from "@env";
-
 import { RootState } from "./services/store";
+import useWebSocket from "./components/RealTimeMessage/webSocket";
 
 import ScreenNavigation from "./ScreenNavigation";
 
 const ScreenWrapper = () => {
   const dispatch = useDispatch();
-  const { loginUser } = useSelector((state: RootState) => state.users);
-
-  console.log("ScreenWrapper loginUser", loginUser);
+  const { loginUser, isNewNotification } = useSelector((state: RootState) => state.users);
 
   const fetchInitialData = async () => {
     await dispatch({
@@ -39,13 +37,26 @@ const ScreenWrapper = () => {
   };
 
   useEffect(() => {
-    console.log("Fetching initial data...");
     fetchInitialData();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // if (!isLoaded) return null; // or loading screen
+  const [isNotification, setIsNotification] = useState(false);
 
-  return <ScreenNavigation loginUser={loginUser} />;
+  useWebSocket((data: any) => {
+    console.log("WebSocket data received:", data);
+    setIsNotification(data);
+    dispatch({
+      type: "users/getNotifications",
+      payload: true,
+    });
+  })
+
+  useEffect(() => {
+    setIsNotification(isNewNotification);
+  },[isNewNotification]);
+
+  console.log({isNewNotification});
+  return <ScreenNavigation loginUser={loginUser} isNotification={isNotification} />;
 };
 export default ScreenWrapper;
