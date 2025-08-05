@@ -1,26 +1,20 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import { View, StyleSheet } from 'react-native';
+import { RootState } from '@/app/services/reducers';
 
-const WithAuthLayout = (WrappedComponent: React.ComponentType) => {
-  const ComponentWithAuthLayout = (props: any) => {
-    const { navigation, loginUser } = props;
-    const isAuthenticated = loginUser?.email;
-
-    useEffect(() => {
-      if (!isAuthenticated) {
-        navigation.navigate('Login');
-      }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isAuthenticated]);
+const WithAuthLayout = (WrappedComponent: React.ComponentType<any>) => {
+  const Wrapper = (props: any) => {
+    const { loginUser } = useSelector((state: RootState) => state.users);
 
     return (
       <View style={styles.layoutContainer}>
-        <WrappedComponent {...props} />
+        <WrappedComponent {...props} loginUser={loginUser} />
       </View>
     );
   };
 
-  return ComponentWithAuthLayout;
+  return Wrapper;
 };
 
 const styles = StyleSheet.create({
@@ -28,11 +22,7 @@ const styles = StyleSheet.create({
     padding: 16,
     flex: 1,
     height: '100%',
-  },
-  loaderContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: '#F5EFFF',
   },
 });
 

@@ -115,7 +115,7 @@ const api =
           type: "users/getAllUsers",
           payload: {
             users: response?.data?.users,
-            userListTypeSelected: body?.designation || null,
+            // userListTypeSelected: body?.designation || null,
           },
         });
         return true;
@@ -158,6 +158,15 @@ const api =
             classes: response?.data?.classes,
             subjects: response?.data?.subjects,
             birthdays: response?.data?.getBirthDayInMonth,
+            notifications: response?.data?.notifications
+          }
+        });
+        return true;
+      }
+      if(dispatchType === "schoolNotifications") {
+        dispatch({
+          type: "users/getNotifications",
+          payload: {
             notifications: response?.data?.notifications
           }
         });

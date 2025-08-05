@@ -1,21 +1,23 @@
-import { FC, useCallback } from "react";
+import { FC, useCallback, useState, useMemo } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import { View, ScrollView, FlatList, StyleSheet, Text } from "react-native";
+import { View, FlatList, StyleSheet, Text } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import AppText from "../AppText";
-import useWebSocket from "../RealTimeMessage/webSocket";
 // @ts-ignore
 // eslint-disable-next-line import/no-unresolved
 import { API_URL } from "@env";
 import { zoneDateToTime, notificationMessages } from "../../utils/common";
 import { RootState } from "../../services/store";
 
+import FullScreenLoader from "../FullScreenLoader";
+
 const Notifications: FC = () => {
   const { notifications } = useSelector((state: RootState) => state.users);
-
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
 
   const fetchNotifications = async () => {
+    setIsLoading(true);
     await dispatch({
       type: "apiRequest",
       payload: {
@@ -23,9 +25,10 @@ const Notifications: FC = () => {
         method: "GET",
         onSuccess: "users/adminInfo",
         onError: "GLOBAL_MESSAGE",
-        dispatchType: "schoolGeneralInfo",
+        dispatchType: "schoolNotifications",
       },
     });
+    setIsLoading(false);
   };
 
   const resetNotificationStatus = () => {
@@ -35,47 +38,20 @@ const Notifications: FC = () => {
     });
   };
 
-  const { sendNotification } = useWebSocket((data: any) => {
-    dispatch({
-      type: "users/getNotifications",
-      payload: true,
-    });
-  });
-
   useFocusEffect(
     useCallback(() => {
-      fetchNotifications();
       resetNotificationStatus();
+      fetchNotifications();
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
   );
 
-//   const [formInput, setFormInput] = useState({
-//     notificationText: "",
-//   });
-//   const handlChange = (name: string, value: string | number) => {
-//     setFormInput((prevState) => ({
-//       ...prevState,
-//       [name]: value?.toString(),
-//     }));
-//   };
-
-//   const handleSendMessage = () => {
-//     sendNotification(formInput?.notificationText);
-//   };
+  const groupedNotifications = useMemo(() => notificationMessages(notifications), [notifications]);
 
   return (
     <View style={styles.container}>
-      {/* <TextInput
-        onChangeText={(text: string) => handlChange("notificationText", text)}
-      ></TextInput>
-      <Button title="New meesgae" onPress={handleSendMessage} /> */}
-      <ScrollView
-        scrollEnabled={true}
-        contentContainerStyle={{ flexGrow: 1, padding: 0 }}
-        keyboardShouldPersistTaps="handled"
-      >
-        {notificationMessages(notifications)?.map((data, i) => (
+        <FullScreenLoader visible={isLoading} />
+        {groupedNotifications?.map((data, i) => (
           <FlatList
             ListHeaderComponent={() => <View style={styles.listHeader}><Text style={styles.listHeaderText}>{notifications[i]?._id}</Text></View>}
             key={i}
@@ -107,7 +83,6 @@ const Notifications: FC = () => {
             }}
           />
         ))}
-      </ScrollView>
     </View>
   );
 };

@@ -102,9 +102,11 @@ const usersSlice = createSlice({
       state.classTeachers = action.payload || []
     },
     getNotifications: (state, action) => {
-      console.log("Notifications:", action.payload);
-      state.isNewNotification = action.payload || false;
+      state.notifications = action.payload.notifications || [];
     },
+    setNotificationStatus: (state, action) => {
+      state.isNewNotification = action.payload || false;
+    }
   },
 });
 

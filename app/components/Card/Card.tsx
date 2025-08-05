@@ -28,9 +28,9 @@ const Card: FC<CardProps> = ({ title, content, image, customStyles, customStyles
                 alt={title}
             /> : null}
             <View>
-                <AppText style={{...customStylesHeading2}}>{content}</AppText>
                 <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                    {icon}
+                    <View style={styles.icon_wrapper}>{icon}</View>                    
+                    <AppText style={{...customStylesHeading2}}>{content}</AppText>
                     <AppText style={{...customStylesHeading1, marginLeft: 8 }}>{title}</AppText>
                 </View>
             </View>
@@ -40,11 +40,14 @@ const Card: FC<CardProps> = ({ title, content, image, customStyles, customStyles
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: '#fff',
-        borderRadius: 8,
-        // borderWidth: 1,
-        // borderColor: '#fff',
-        padding: 16,
+        // backgroundColor: '#fff',
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        paddingTop: 10,
+        paddingBottom: 10,
+        paddingRight: 16,
+        paddingLeft: 16,
         marginBottom: 16,
         shadowColor: '#999',
         shadowOffset: {
@@ -68,5 +71,16 @@ const styles = StyleSheet.create({
         borderRadius: '50%',
         marginRight: 8,
     },
+    icon_wrapper: {
+        width: 32,
+        height: 32,
+        backgroundColor: '#FFF9E5',
+        borderWidth: 1,
+        borderColor: '#F2EDD1',
+        borderRadius: 32,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    }
 });
 export default Card;

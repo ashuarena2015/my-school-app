@@ -1,25 +1,12 @@
-import React, { FC } from 'react';
+import React from 'react';
 import Home from './home';
 import WithAuthLayout from '../HOC/WithAuth';
 
-interface HomePageProps {
-    navigation?: object;
-    route?: object;
-    loginUser?: {
-        email?: string;
-        firstName?: string;
-        lastName?: string;
-        designation?: string;
-        profilePhoto?: string;
-    }; // Adjust type as needed
-}
+const EnhancedHome = WithAuthLayout(Home);
 
-const HomePageAuth = WithAuthLayout((props: HomePageProps) => <Home navigation={props?.navigation} loginUser={props?.loginUser || {}} />);
-
-const HomePage: FC<HomePageProps> = ({ navigation, loginUser }) => {
-    return (
-        <HomePageAuth navigation={navigation} loginUser={loginUser} />
-    )
-}
+const HomePage = ({ navigation, route }: any) => {
+    console.log({navigation, route});
+  return <EnhancedHome />;
+};
 
 export default HomePage;

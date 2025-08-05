@@ -13,6 +13,7 @@ import Home from "./components/home";
 import Login from "./components/login";
 import Logout from "./components/Logout";
 import Notifications from "./components/Notifications";
+import Blogs from "./components/Blogs";
 
 
 const Drawer = createDrawerNavigator();
@@ -31,10 +32,10 @@ const CustomDrawerContent = (props: DrawerContentComponentProps & { loginUser?: 
       {/* User Info Section */}
       <View style={styles.userSection}>
         <Image
-          source={{ uri: `${PHOTO_URL}/${loginUser?.profilePhoto}` }}
+          source={{ uri: `${PHOTO_URL}/${loginUser?.profilePhoto || 'default-avatar.png'}` }}
           style={styles.avatar}
         />
-        <Text style={styles.username}>{loginUser?.firstName} {loginUser?.lastName}</Text>
+        <Text style={styles.username}>{loginUser?.firstName || loginUser?.userId} {loginUser?.lastName}</Text>
         <Text style={styles.email}>{loginUser?.email}</Text>
       </View>
 
@@ -61,11 +62,7 @@ const AuthenticatedDrawer:FC<ScreenNavigationProps> = ({ loginUser, isNotificati
   >
     <Drawer.Screen
       name="Home"
-      component={({ navigation, route }: { navigation: any; route: any }) => (
-        <MainLayout navigation={navigation} route={route}>
-          <Home loginUser={loginUser} />
-        </MainLayout>
-      )}
+      component={Home}
       options={{
         headerTitle: () => (
           ScreenHeader({ loginUser, isNotification })
@@ -89,7 +86,23 @@ const AuthenticatedDrawer:FC<ScreenNavigationProps> = ({ loginUser, isNotificati
         headerTitleStyle: { fontWeight: 'bold' },
       }}
     />
-    <Drawer.Screen name="Logout" component={() => <Logout navigation={{ navigate: (screen: string) => console.log(`Navigating to ${screen}`) }} />} />
+    <Drawer.Screen
+      name="Blogs"
+      component={Blogs}
+      options={{
+        headerTitle: () => (
+          ScreenHeader({ loginUser, isNotification })
+        ),
+        headerTitleAlign: 'left',
+        headerStyle: { backgroundColor: '#463a69' },
+        headerTintColor: '#fff',
+        headerTitleStyle: { fontWeight: 'bold' },
+      }}
+    />
+    <Drawer.Screen
+      name="Logout"
+      component={() => <Logout navigation={{ navigate: (screen: string) => console.log(`Navigating to ${screen}`) }} />}
+    />
   </Drawer.Navigator>
 );
 

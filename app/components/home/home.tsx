@@ -10,11 +10,13 @@ import React, { FC, useEffect } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
   StyleSheet,
   View,
   Image
 } from 'react-native';
+
+import Modules from './modules';
+import HomeSearch from './home_search';
 
 // @ts-ignore
 // eslint-disable-next-line import/no-unresolved
@@ -23,12 +25,11 @@ import Icon from "react-native-vector-icons/FontAwesome5";
 
 import Toast from 'react-native-toast-message';
 import { useSelector } from 'react-redux';
-import Card from '../Card';
 
 // import UsersList from '../Users/UsersList';
 import AppText from '../AppText';
 
-interface StudentsListProps {
+interface HomePageProps {
   navigation: any;
   loginUser: {
     email?: string;
@@ -36,10 +37,13 @@ interface StudentsListProps {
     lastName?: string;
     designation?: string;
     profilePhoto?: string;
+    userId: string;
   }
 }
 
-const Home: FC<StudentsListProps> = ({ navigation, loginUser }) => {
+const Home: FC<HomePageProps> = (props) => {
+  console.log({props});
+  const { loginUser, navigation } = props;
 
   const { userCounter } = useSelector((state: any) => state.users);
 
@@ -60,45 +64,27 @@ const Home: FC<StudentsListProps> = ({ navigation, loginUser }) => {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
     >
-      <ScrollView
-        contentContainerStyle={styles.sectionContainer}
-        keyboardShouldPersistTaps="handled"
-        scrollEnabled={false}
-      >
-        <View>
+        <View style={{ flex: 1 }}>
           <View style={styles.profileInfoContainer}>
-            <Image
-              style={styles.profileImage}
-              source={{ uri: `${PHOTO_URL}/${loginUser?.profilePhoto}` }}
-            />
             <View>
-              <AppText>Good morning!</AppText>
-              <AppText style={{ fontSize: 20, fontWeight: 'bold' }}>{`Welcome, ${loginUser?.firstName} ${loginUser?.lastName}`}</AppText>
+              <AppText>Good Morning!</AppText>
+              <AppText style={{ fontSize: 20, fontWeight: 'bold' }}>{`${loginUser?.firstName || loginUser?.userId} ${loginUser?.lastName || ''}`}</AppText>
+            </View>
+            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+              <Image
+                style={styles.profileImage}
+                source={{ uri: `${PHOTO_URL}/${loginUser?.profilePhoto || 'default-avatar.png'}` }}
+              />
+              <View style={styles.icon_wrapper}>
+                <View style={styles.notification_dot}></View>
+                <Icon name="bell" size={18} color="#999" />
+              </View>
             </View>
           </View>
-          <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', gap: 4 }}>
-            <Card
-              title="Students"
-              content={userCounter?.students}
-              image={''}
-              icon={<Icon name="graduation-cap" size={24} color="#fff" />}
-              customStyles={{ backgroundColor: '#A1887F', width: '48%'}}
-              customStylesHeading1={{ fontSize: 16, fontWeight: '600', color: '#fff' }}
-              customStylesHeading2={{ fontSize: 32, fontWeight: '600', color: '#fff' }}
-            />
-            <Card
-              title="Admins"
-              content={parseFloat(userCounter?.teachers + userCounter?.staffs + userCounter?.head_principals + userCounter?.head_teachers + userCounter?.principals || 0).toFixed(0)}
-              image=""
-              icon={<Icon name="user-shield" size={24} color="#fff" />}
-              customStyles={{ backgroundColor: '#78909C', width: '48%'}}
-              customStylesHeading1={{ fontSize: 16, fontWeight: '600', color: '#fff' }}
-              customStylesHeading2={{ fontSize: 32, fontWeight: '600', color: '#fff' }}
-            />
-          </View>
+          <HomeSearch />
+          <Modules />
           {/* <UsersList navigation={navigation} /> */}
         </View>
-      </ScrollView>
     </KeyboardAvoidingView>
   );
 }
@@ -108,17 +94,39 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   profileInfoContainer: {
-    padding: 8,
+    paddingTop: 8,
+    paddingBottom: 8,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: 8,
   },
   profileImage: {
-    width: 56,
-    height: 56,
-    borderRadius: 56,
+    width: 42,
+    height: 42,
+    borderRadius: 42,
     marginRight: 10,
+  },
+  icon_wrapper: {
+    width: 42,
+    height: 42,
+    backgroundColor: '#FFF9E5',
+    borderWidth: 1,
+    borderColor: '#DCD7C9',
+    borderRadius: 32,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  notification_dot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#A4DD00',
+    position: 'absolute',
+    top: 0,
+    right: 2,
   },
 });
 

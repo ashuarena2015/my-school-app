@@ -50,7 +50,7 @@ const ScreenWrapper = () => {
       type: "users/getNotifications",
       payload: true,
     });
-  })
+  }, [])
 
   useEffect(() => {
     setIsNotification(isNewNotification);

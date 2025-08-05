@@ -1,5 +1,5 @@
-import React, { FC, useEffect, useState, useCallback, useMemo } from "react";
-import { ScrollView, FlatList, Image, StyleSheet, View } from "react-native";
+import React, { FC, useEffect, useState, useCallback } from "react";
+import { FlatList, Image, StyleSheet, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,6 +7,7 @@ import { AppDispatch, RootState } from "../../services/store";
 import AppText from "../AppText";
 
 import UserTypeDropdown from "./UserType";
+// import FullScreenLoader from "../FullScreenLoader";
 
 // @ts-ignore
 // eslint-disable-next-line import/no-unresolved
@@ -26,18 +27,19 @@ const UsersList: FC<StudentsListProps> = ({ navigation }) => {
     useSelector((state: RootState) => state.users) || [];
 
   const [userList, setUserList] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const getClassesMapItems = (roles: any[]) => {
-    return roles.map((item) => ({
+    return roles?.map((item) => ({
       label: item.label,
       value: item.key,
       key: item.key
     }));
   };
-  const [valueUser, setValueUser] = useState<string | null>('');
+  const [valueUser, setValueUser] = useState<string | null>('all');
   
   const fetchAllUsers = useCallback(async () => {
-    console.log("Fetching all users with valueUser:", valueUser);
+    setIsLoading(true);
     await dispatch({
       type: "apiRequest",
       payload: {
@@ -52,20 +54,21 @@ const UsersList: FC<StudentsListProps> = ({ navigation }) => {
         },
       },
     });
+    setIsLoading(false);
   }, [dispatch, valueUser]);
 
   // Call only when valueUser changes
   useEffect(() => {
-    if (!users?.length || valueUser) {
+    if (valueUser) {
       fetchAllUsers();
     }
-  }, [users, fetchAllUsers, valueUser]);
+  }, [fetchAllUsers, valueUser]);
 
   // Sync Redux to local list
   useEffect(() => {
-    if (users?.length) {
+    //if (users?.length) {
       setUserList(users);
-    }
+    //}
   }, [users]);
 
   const getItems = useCallback(() => getClassesMapItems(roleTypes), [roleTypes]);
@@ -84,18 +87,13 @@ const UsersList: FC<StudentsListProps> = ({ navigation }) => {
               setValueUser={setValueUser}
             />
           </View>
-          <ScrollView
-            scrollEnabled={true}
-            contentContainerStyle={{ flexGrow: 1, padding: 0, maxHeight: 320 }}
-            keyboardShouldPersistTaps="handled"
-          >
             <FlatList
               data={userList}
-              // scrollEnabled={false}
-              keyExtractor={(item, index) => item.id?.toString() ?? index.toString()}
+              keyExtractor={(item, index) => item._id?.toString() ?? index.toString()}
+              style={{ maxHeight: 350 }}
               renderItem={({ item }) => {
                 return (
-                  <View style={{ ...styles.infoView }} key={item.id}>
+                  <View style={{ ...styles.infoView }} key={item._id}>
                     <View
                       style={{
                         display: "flex",
@@ -126,17 +124,11 @@ const UsersList: FC<StudentsListProps> = ({ navigation }) => {
                         </AppText>
                       </View>
                     </View>
-                    {/* <View>
-                      <AppText onPress={() => navigation.navigate("Profile")}>
-                        Go
-                      </AppText>
-                    </View> */}
                     <Icon name="arrow-right" size={16} color="#333" />
                   </View>
                 );
               }}
             />
-          </ScrollView>
         </View>
       </SafeAreaView>
     </SafeAreaProvider>

@@ -1,7 +1,10 @@
 import { useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
+// @ts-ignore
+// eslint-disable-next-line import/no-unresolved
+import { WEBSOCKET_URL } from '@env';
 
-const SOCKET_SERVER_URL = "http://192.168.1.10:3001";
+const SOCKET_SERVER_URL = WEBSOCKET_URL;
 
 type NotificationHandler = (data: any) => void;
 
@@ -31,7 +34,16 @@ const useWebSocket = (onNotification: NotificationHandler, deps: any[] = []) => 
     });
   };
 
-  return { sendNotification };
+  const sendInboxMessage = (payload: {
+    email: string;
+    message: string;
+    userId: string;
+  }) => {
+    console.log({payload});
+    socketRef.current?.emit("send_inbox_message", payload);
+  };
+
+  return { sendNotification, sendInboxMessage };
 };
 
 export default useWebSocket;

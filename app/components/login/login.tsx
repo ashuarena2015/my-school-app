@@ -29,6 +29,8 @@ import { AppDispatch, RootState } from "../../services/store";
 import * as LocalAuthentication from "expo-local-authentication";
 import * as SecureStore from "expo-secure-store";
 
+import FullScreenLoader from "../FullScreenLoader";
+
 interface PageProps {
   navigation: any;
   route: object
@@ -53,6 +55,8 @@ const Login: FC<PageProps> = ({ navigation, route }) => {
   const [openUserType, setOpenUserType] = useState(false);
   const [userType, setUserType] = useState(null);
   const [allUsersType, setAllUsersType] = useState([{}]);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (roleTypes.length > 0) {
@@ -88,6 +92,7 @@ const Login: FC<PageProps> = ({ navigation, route }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const handleSubmit = async () => {
+    setIsLoading(true);
     const response = (await dispatch({
       type: "apiRequest",
       payload: {
@@ -106,6 +111,7 @@ const Login: FC<PageProps> = ({ navigation, route }) => {
         },
       },
     })) as unknown as { isLogin: boolean; isNewUser: boolean };
+    setIsLoading(false);
     if (response?.isNewUser) {
       setOtpVerifyForm(true);
     }
@@ -137,6 +143,7 @@ const Login: FC<PageProps> = ({ navigation, route }) => {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
     >
+      <FullScreenLoader visible={isLoading} />
       <ScrollView style={styles.mainWrpper} keyboardShouldPersistTaps="handled">
         <View style={styles.formContainer}>
           <View style={styles.loginContainer}>
@@ -145,6 +152,20 @@ const Login: FC<PageProps> = ({ navigation, route }) => {
             </AppText>
             {!otpVerifyForm ? (
               <View style={{ flex: 1, gap: 16, position: "relative", zIndex: 1 }}>
+                <TextInput
+                  style={styles.inputText}
+                  autoCapitalize="none"
+                  placeholder="Enter your email"
+                  placeholderTextColor="#999"
+                  onChangeText={(text: string) => handlChange("email", text)}
+                />
+                <TextInput
+                  style={styles.inputText}
+                  placeholder="Enter your password"
+                  placeholderTextColor="#999"
+                  onChangeText={(text: string) => handlChange("password", text)}
+                  secureTextEntry
+                />
                 <View style={{ position: "relative", zIndex: 9999 }}>
                   <DropDownPicker
                     open={open}
@@ -186,20 +207,6 @@ const Login: FC<PageProps> = ({ navigation, route }) => {
                     }}
                   />
                 </View>
-                <TextInput
-                  style={styles.inputText}
-                  autoCapitalize="none"
-                  placeholder="Enter your email"
-                  placeholderTextColor="#999"
-                  onChangeText={(text: string) => handlChange("email", text)}
-                />
-                <TextInput
-                  style={styles.inputText}
-                  placeholder="Enter your password"
-                  placeholderTextColor="#999"
-                  onChangeText={(text: string) => handlChange("password", text)}
-                  secureTextEntry
-                />
               </View>
             ) : (
               <View>
