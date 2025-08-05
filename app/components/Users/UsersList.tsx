@@ -17,17 +17,16 @@ interface StudentsListProps {
   navigation: any;
 }
 
-const UsersList: FC<StudentsListProps> = ({ navigation }) => {
-
-  console.log('UsersList component rendered');
+const UsersList: FC = () => {
 
   const dispatch = useDispatch<AppDispatch>();
   // const router = useRouter();
-  const { users, roleTypes, userListTypeSelected } =
+  const { users, roleTypes, userListTypeSelected, onlineUsers } =
     useSelector((state: RootState) => state.users) || [];
 
   const [userList, setUserList] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [onlineUsersStatus, setOnlineUsersStatus] = useState<any>([]);
 
   const getClassesMapItems = (roles: any[]) => {
     return roles?.map((item) => ({
@@ -64,18 +63,24 @@ const UsersList: FC<StudentsListProps> = ({ navigation }) => {
     }
   }, [fetchAllUsers, valueUser]);
 
-  // Sync Redux to local list
   useEffect(() => {
-    //if (users?.length) {
-      setUserList(users);
-    //}
-  }, [users]);
+    const updatedUserList = users.map(user => {
+      const isOnline = onlineUsers.includes(user?.email);
+      return {
+        ...user,
+        online: isOnline,
+      };
+    });
+  
+    setUserList(updatedUserList);
+  }, [users, onlineUsers]);
 
   const getItems = useCallback(() => getClassesMapItems(roleTypes), [roleTypes]);
 
+  console.log({userList, onlineUsers});
   return (
     <SafeAreaProvider>
-      <SafeAreaView edges={["top"]}>
+      <SafeAreaView style={{ height: '100%' }} edges={["top"]}>
         <View style={{ ...styles.container }}>
           <View style={{ marginBottom: 20 }}>
             <AppText style={{ ...styles.container_title }}>
@@ -90,7 +95,8 @@ const UsersList: FC<StudentsListProps> = ({ navigation }) => {
             <FlatList
               data={userList}
               keyExtractor={(item, index) => item._id?.toString() ?? index.toString()}
-              style={{ maxHeight: 350 }}
+              style={{ height: 350 }}
+              // scrollEnabled={false}
               renderItem={({ item }) => {
                 return (
                   <View style={{ ...styles.infoView }} key={item._id}>
@@ -110,6 +116,7 @@ const UsersList: FC<StudentsListProps> = ({ navigation }) => {
                         style={{ ...styles.infoView_image }}
                       />
                       <View style={{ maxWidth: "80%" }}>
+                      {item?.online ? <AppText>Online</AppText> : ''}
                         <AppText
                           onPress={() => alert("hi")}
                           style={{ ...styles.full_name }}
@@ -142,6 +149,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingTop: 20,
     padding: 16,
+    height: '100%'
   },
   container_title: {
     fontSize: 20,

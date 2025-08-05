@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -10,7 +10,7 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 // @ts-ignore
 // eslint-disable-next-line import/no-unresolved
 import { PHOTO_URL } from "@env";
@@ -27,8 +27,10 @@ interface userInfoProps {
 }
 
 const Birtdays: FC = () => {
+    const dispatch = useDispatch();
+
   const [modalVisible, setModalVisible] = useState(false);
-  const { birthdays, loginUser } = useSelector((state: RootState) => state.users);
+  const { birthdays, loginUser, isInboxUpdate, inboxGetterEmail } = useSelector((state: RootState) => state.users);
 
   const [messageSent, setMessageSent] = useState(false);
 
@@ -39,19 +41,26 @@ const Birtdays: FC = () => {
     userId: ''
   })
 
-  const [messageText, setMessageText] = useState('')
-  console.log({userInfo});
-  const { sendInboxMessage } = useWebSocket((data) => {
-        setMessageSent(true)
-    });
+//   const [messageText, setMessageText] = useState('')
+//   console.log({userInfo});
+//   const { sendInboxMessage } = useWebSocket((data) => {
+//         setMessageSent(data);
+//         console.log({ userInfo });
+//         dispatch({
+//             type: 'users/inbox',
+//             payload: {
+//                 inboxUpdate: true,
+//                 inboxGetterEmail: 'priyashu977@gmail.com'
+//             }
+//         })
+//     });
 
-  useWebSocket((data) => {
-    if(loginUser?.email === userInfo?.email) {
-        alert('hiiii');
-    }
-  }, [messageSent]);
+//   useWebSocket((data) => {
+//     if(inboxGetterEmail && (inboxGetterEmail ===  loginUser?.email)) {
+//         alert('You have a notification');
+//     }
+//   }, [isInboxUpdate, inboxGetterEmail, userInfo]);
 
-  console.log({messageSent});
   return (
       <View style={styles.upcoming_birthday_wrapper}>
         <View style={styles.upcoming_birthday_header}>
@@ -93,7 +102,7 @@ const Birtdays: FC = () => {
           </View>
         </ScrollView>
         {/* Modal - Wish Birtday */}
-        <Modal
+        {/* <Modal
           backdropColor={"#ccc"}
           transparent={true}
           animationType="fade"
@@ -128,7 +137,7 @@ const Birtdays: FC = () => {
               </Pressable>
             </View>
           </View>
-        </Modal>
+        </Modal> */}
       </View>
   );
 };

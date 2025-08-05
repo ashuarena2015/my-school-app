@@ -28,7 +28,10 @@ interface UsersState {
   birthdays: any[];
   userListTypeSelected: string | null;
   notifications: any[];
-  isNewNotification: boolean
+  isNewNotification: boolean;
+  isInboxUpdate: boolean;
+  inboxGetterEmail: string;
+  onlineUsers: any[]
 }
 
 // Initial state with TypeScript
@@ -50,7 +53,10 @@ const initialState: UsersState = {
   birthdays: [],
   userListTypeSelected: '',
   notifications: [],
-  isNewNotification: false
+  isNewNotification: false,
+  isInboxUpdate: false,
+  inboxGetterEmail: '',
+  onlineUsers: []
 };
 
 // Create slice with TypeScript
@@ -106,11 +112,25 @@ const usersSlice = createSlice({
     },
     setNotificationStatus: (state, action) => {
       state.isNewNotification = action.payload || false;
+    },
+    inbox: (state, action) => {
+      state.isInboxUpdate = action.payload.inboxUpdate;
+      state.inboxGetterEmail = action.payload.inboxGetterEmail;
+    },
+    onlineUsers: (state, action) => {
+      const newUsers = Array.isArray(action.payload.onlineUsers)
+        ? action.payload.onlineUsers
+        : [action.payload.onlineUsers];
+      const merged = [...state.onlineUsers, ...newUsers];
+    
+      state.onlineUsers = [...new Set(merged)];
     }
   },
 });
 
 // Export actions & reducer
-export const { getUsers, isLoading, getLoginDetails, logoutUser, getUserDetail, uploadProfilePhoto, getAllStudents, schoolGeneralInfo, getNotifications } =
+export const { getUsers, isLoading, getLoginDetails, logoutUser,
+  getUserDetail, uploadProfilePhoto, getAllStudents,
+  schoolGeneralInfo, getNotifications, inbox } =
   usersSlice.actions;
 export default usersSlice.reducer;

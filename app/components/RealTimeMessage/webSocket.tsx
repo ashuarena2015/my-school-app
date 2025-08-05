@@ -1,49 +1,38 @@
-import { useEffect, useRef } from "react";
-import { io, Socket } from "socket.io-client";
+// hooks/useWebSocket.ts
+import { useEffect, useRef } from 'react';
+import { io, Socket } from 'socket.io-client';
 // @ts-ignore
 // eslint-disable-next-line import/no-unresolved
 import { WEBSOCKET_URL } from '@env';
 
-const SOCKET_SERVER_URL = WEBSOCKET_URL;
+type CallbackFn = (data: any) => void;
 
-type NotificationHandler = (data: any) => void;
-
-const useWebSocket = (onNotification: NotificationHandler, deps: any[] = []) => {
+const useWebSocket = (onMessage: CallbackFn, deps: any[] = []) => {
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
-    const socket = io(SOCKET_SERVER_URL, {
-      transports: ['websocket'],
-    });
+    const socket = io(WEBSOCKET_URL);
     socketRef.current = socket;
 
-    socket.on("connect", () => {
-      console.log("Connected to socket server");
+    socket.on('connect', () => {
+      console.log('Connected to WebSocket');
     });
 
-    socket.on("notification", onNotification);
+    socket.on('onlineUser', (data) => {
+      console.log("onlineUser received:", data);
+      onMessage(data); // Send to component
+    });
 
     return () => {
       socket.disconnect();
     };
   }, deps);
 
-  const sendNotification = (message: any) => {
-    socketRef.current?.emit("send_message", {
-      message,
-    });
+  const checkOnlineUser = (email: string) => {
+    socketRef.current?.emit('check_online', { email });
   };
 
-  const sendInboxMessage = (payload: {
-    email: string;
-    message: string;
-    userId: string;
-  }) => {
-    console.log({payload});
-    socketRef.current?.emit("send_inbox_message", payload);
-  };
-
-  return { sendNotification, sendInboxMessage };
+  return { checkOnlineUser };
 };
 
 export default useWebSocket;

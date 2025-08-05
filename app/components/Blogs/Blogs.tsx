@@ -66,7 +66,6 @@ const Blogs: FC = () => {
         data={allPosts}
         keyExtractor={(item, index) => item.id?.toString() ?? index.toString()}
         renderItem={({ item }) => {
-          console.log({ item });
           return (
             <View key={item.id}>
               <View

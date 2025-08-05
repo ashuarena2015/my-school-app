@@ -28,8 +28,8 @@ export const modulesItems = [
         icon: 'indian-rupee-sign'
     },
     {
-        label: 'Meeting',
-        icon: 'handshake'
+        label: 'Chat',
+        icon: 'comments'
     },
     {
         label: 'Library',

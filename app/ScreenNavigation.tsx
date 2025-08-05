@@ -7,13 +7,12 @@ import { createStackNavigator } from "@react-navigation/stack";
 // eslint-disable-next-line import/no-unresolved
 import { PHOTO_URL } from '@env';
 
-import MainLayout from "./components/MainLayout/MainLayout";
-
 import Home from "./components/home";
 import Login from "./components/login";
 import Logout from "./components/Logout";
 import Notifications from "./components/Notifications";
 import Blogs from "./components/Blogs";
+import Chat from "./components/Chat";
 
 
 const Drawer = createDrawerNavigator();
@@ -89,6 +88,19 @@ const AuthenticatedDrawer:FC<ScreenNavigationProps> = ({ loginUser, isNotificati
     <Drawer.Screen
       name="Blogs"
       component={Blogs}
+      options={{
+        headerTitle: () => (
+          ScreenHeader({ loginUser, isNotification })
+        ),
+        headerTitleAlign: 'left',
+        headerStyle: { backgroundColor: '#463a69' },
+        headerTintColor: '#fff',
+        headerTitleStyle: { fontWeight: 'bold' },
+      }}
+    />
+    <Drawer.Screen
+      name="Chat"
+      component={Chat}
       options={{
         headerTitle: () => (
           ScreenHeader({ loginUser, isNotification })

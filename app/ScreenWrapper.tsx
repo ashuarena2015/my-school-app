@@ -43,20 +43,18 @@ const ScreenWrapper = () => {
 
   const [isNotification, setIsNotification] = useState(false);
 
-  useWebSocket((data: any) => {
-    console.log("WebSocket data received:", data);
-    setIsNotification(data);
-    dispatch({
-      type: "users/getNotifications",
-      payload: true,
-    });
-  }, [])
+  // useWebSocket((data: any) => {
+  //   setIsNotification(data);
+  //   dispatch({
+  //     type: "users/getNotifications",
+  //     payload: true,
+  //   });
+  // }, [])
 
-  useEffect(() => {
-    setIsNotification(isNewNotification);
-  },[isNewNotification]);
+  // useEffect(() => {
+  //   setIsNotification(isNewNotification);
+  // },[isNewNotification]);
 
-  console.log({isNewNotification});
   return <ScreenNavigation loginUser={loginUser} isNotification={isNotification} />;
 };
 export default ScreenWrapper;

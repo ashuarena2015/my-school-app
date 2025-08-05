@@ -24,10 +24,12 @@ import { PHOTO_URL } from '@env';
 import Icon from "react-native-vector-icons/FontAwesome5";
 
 import Toast from 'react-native-toast-message';
-import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 // import UsersList from '../Users/UsersList';
 import AppText from '../AppText';
+
+import useWebSocket from '../RealTimeMessage/webSocket';
 
 interface HomePageProps {
   navigation: any;
@@ -42,10 +44,8 @@ interface HomePageProps {
 }
 
 const Home: FC<HomePageProps> = (props) => {
-  console.log({props});
+  const dispatch = useDispatch();
   const { loginUser, navigation } = props;
-
-  const { userCounter } = useSelector((state: any) => state.users);
 
   useEffect(() => {
     if (!loginUser?.email) {
@@ -57,6 +57,21 @@ const Home: FC<HomePageProps> = (props) => {
       });
     }
   }, [loginUser?.email, navigation]);
+
+  const { checkOnlineUser } = useWebSocket((data) => {
+    dispatch({
+      type: 'users/onlineUsers',
+      payload: {
+        onlineUsers: data?.email
+      }
+    })
+  },[]);
+
+  useEffect(() => {
+    if (loginUser?.email) {
+      checkOnlineUser(loginUser.email);
+    }
+  }, [loginUser?.email]);
 
   return (
     <KeyboardAvoidingView
@@ -80,10 +95,9 @@ const Home: FC<HomePageProps> = (props) => {
                 <Icon name="bell" size={18} color="#999" />
               </View>
             </View>
-          </View>
+          </View> 
           <HomeSearch />
           <Modules />
-          {/* <UsersList navigation={navigation} /> */}
         </View>
     </KeyboardAvoidingView>
   );
