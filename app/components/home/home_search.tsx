@@ -1,8 +1,9 @@
 import React, { FC } from 'react';
-import { View, TextInput, StyleSheet } from 'react-native';
+import { View, TextInput, StyleSheet, Platform } from 'react-native';
 import Icon from "react-native-vector-icons/FontAwesome6";
 
 const HomeSearch: FC = () => {
+
     return (
         <View style={styles.container}>
             <TextInput style={styles.input}></TextInput>
@@ -15,16 +16,18 @@ const styles = StyleSheet.create({
     container: {
         display: 'flex',
         flexDirection: 'row',
-        padding: 16,
+        alignItems: 'center',
+        paddingHorizontal: 16,
+        paddingVertical: Platform.OS === 'ios' ? 16 : 8,
         backgroundColor: '#fff',
         borderRadius: 32,
         borderColor: '#ccc',
         borderWidth: 1,
-        marginBottom: 16
+        marginVertical: 16
     },
     input: {
         color: '#C3ACD0',
-        fontSize: 16,
+        // fontSize: 16,
         width: '95%'
     }
 })

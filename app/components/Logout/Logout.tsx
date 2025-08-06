@@ -1,40 +1,51 @@
-import React, { FC } from 'react';
-import { useDispatch } from 'react-redux';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import React, { FC, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { View, Text, Button, StyleSheet, Alert } from 'react-native';
 // @ts-ignore
 // eslint-disable-next-line import/no-unresolved
 import { API_URL } from "@env";
 
+import useWebSocket from '../RealTimeMessage/webSocket';
+import { RootState } from '@/app/services/store';
+
 interface LogoutProps {
-    navigation?: {
-        navigate: (screen: string) => void;
-    };
+    loginUser: {
+        email: string;
+    }
 }
 
-const Logout: FC<LogoutProps> = ({ navigation }) => {
+const Logout: FC<LogoutProps> = () => {
+
+    const { loginUser } = useSelector((state: RootState) => state.users);
+    const { checkOfflineUser } = useWebSocket((data) => {
+        console.log({checkOfflineUserData:data});
+      },[]);
+
+    useEffect(() => {
+        return () => {
+            console.log('logout wala useEffect', loginUser);
+            checkOfflineUser(loginUser.email || '');
+        }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [loginUser?.email]);
+    
 
     const dispatch = useDispatch();
     const handleLogout = async () => {
-        const response = await dispatch({
-            type: "apiRequest",
-            payload: {
-                url: `${API_URL}/user/logout`,
-                method: "GET",
-                onError: "GLOBAL_MESSAGE",
-                dispatchType: "userLogout",
-            }
-        }) as { isLogout?: boolean; error?: string };
-
-        if (response.isLogout) {
-            navigation?.navigate('Login');
-        } else {
-            console.error("Logout failed", response?.error);
-        }
+            await dispatch({
+                type: "apiRequest",
+                payload: {
+                    url: `${API_URL}/user/logout`,
+                    method: "GET",
+                    onError: "GLOBAL_MESSAGE",
+                    dispatchType: "userLogout",
+                }
+            }) as { isLogout?: boolean; error?: string };
     };
 
     return (
         <View style={styles.container}>
-            <Text style={styles.text}>Are you sure you want to logout?</Text>
+            <Text style={styles.text}>{loginUser?.email}, Are you sure you want to logout?</Text>
             <Button title="Logout" onPress={handleLogout} />
         </View>
     );

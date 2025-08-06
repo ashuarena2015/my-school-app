@@ -1,18 +1,21 @@
 import { FC } from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
-import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerContentComponentProps } from "@react-navigation/drawer";
+import { View, Text, Image, StyleSheet, Platform } from "react-native";
+import { useDispatch } from "react-redux";
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem, DrawerContentComponentProps } from "@react-navigation/drawer";
 import { createStackNavigator } from "@react-navigation/stack";
 
 // @ts-ignore
 // eslint-disable-next-line import/no-unresolved
-import { PHOTO_URL } from '@env';
+import { PHOTO_URL, API_URL } from '@env';
 
 import Home from "./components/home";
 import Login from "./components/login";
-import Logout from "./components/Logout";
+// import Logout from "./components/Logout";
 import Notifications from "./components/Notifications";
 import Blogs from "./components/Blogs";
 import Chat from "./components/Chat";
+
+import useWebSocket from './components/RealTimeMessage/webSocket';
 
 
 const Drawer = createDrawerNavigator();
@@ -26,6 +29,20 @@ interface ScreenNavigationProps {
 // Your custom user component in the drawer
 const CustomDrawerContent = (props: DrawerContentComponentProps & { loginUser?: any }) => {
   const { loginUser } = props;
+
+  const dispatch = useDispatch();
+
+  const { checkOfflineUser } = useWebSocket((data) => {
+    console.log({checkOfflineUserData:data});
+    dispatch({
+      type: 'users/onlineUsers',
+      payload: {
+        onlineUsers: data,
+        findOfflineUser: true
+      }
+    });
+  },[]);
+
   return (
     <DrawerContentScrollView {...props}>
       {/* User Info Section */}
@@ -40,6 +57,21 @@ const CustomDrawerContent = (props: DrawerContentComponentProps & { loginUser?: 
 
       {/* Drawer Items */}
       <DrawerItemList {...props} />
+      <DrawerItem
+        label="Logout"
+        onPress={async () => {
+          checkOfflineUser(loginUser?.email || '');
+          dispatch({
+              type: "apiRequest",
+              payload: {
+                  url: `${API_URL}/user/logout`,
+                  method: "GET",
+                  onError: "GLOBAL_MESSAGE",
+                  dispatchType: "userLogout",
+              }
+          }) as { isLogout?: boolean; error?: string };
+        }}
+      />
     </DrawerContentScrollView>
   );
 }
@@ -47,7 +79,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps & { loginUser?: 
 const ScreenHeader = ({ loginUser, isNotification }: { loginUser?: any, isNotification?: boolean }) => (
   <View style={styles.headerInfoContainer}>
     <Image
-      source={{ uri: `${PHOTO_URL}/${loginUser?.profilePhoto}` }}
+      source={{ uri: `${PHOTO_URL}/${loginUser?.profilePhoto || 'default-avatar.png'}` }}
       style={styles.avatarHeader}
     />
     {isNotification ? <View style={styles.notification_dot}></View> : null}
@@ -111,10 +143,10 @@ const AuthenticatedDrawer:FC<ScreenNavigationProps> = ({ loginUser, isNotificati
         headerTitleStyle: { fontWeight: 'bold' },
       }}
     />
-    <Drawer.Screen
+    {/* <Drawer.Screen
       name="Logout"
-      component={() => <Logout navigation={{ navigate: (screen: string) => console.log(`Navigating to ${screen}`) }} />}
-    />
+      component={Logout}
+    /> */}
   </Drawer.Navigator>
 );
 
@@ -130,6 +162,7 @@ const ScreenNavigation: FC<ScreenNavigationProps> = ({ loginUser, isNotification
 
   const isAuthenticated = !!loginUser?.email;
 
+  console.log({loginUserScreen: loginUser});
   return (
     isAuthenticated ? <AuthenticatedDrawer loginUser={loginUser} isNotification={isNotification} /> : <AuthStack />
   );
@@ -139,15 +172,17 @@ const styles = StyleSheet.create({
   userSection: {
     padding: 20,
     backgroundColor: "#FFE57F",
-    marginBottom: 10,
     alignItems: "center",
     borderRadius: 8,
+    marginBottom: 10
   },
   avatar: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    marginBottom: 10,
+    borderWidth: 2,
+    borderColor: '#FFF',
+    backgroundColor: '#FFF'
   },
   username: {
     fontWeight: "bold",
@@ -160,20 +195,21 @@ const styles = StyleSheet.create({
   headerInfoContainer: {
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'flex-end',
+    alignItems: 'center',
     justifyContent: 'flex-end',
-    backgroundColor: '#463a69',
     color: '#fff',
-    width: '100%',
-    marginBottom: 8,
-    flex: 1,
     alignSelf: 'stretch',
+    width: '100%'
   },
   avatarHeader: {
-    width: 32,
-    height: 32,
-    borderRadius: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 36,
     marginRight: 10,
+    marginBottom: Platform.OS === 'ios' ? 10 : 0,
+    // borderWidth: 1,
+    // borderColor: '#FFF',
+    backgroundColor: '#FFF'
   },
   notification_dot: {
     width: 10,

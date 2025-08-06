@@ -44,7 +44,7 @@ const Login: FC<PageProps> = ({ navigation, route }) => {
     verifyOtp: "",
   });
 
-  const { branches, roleTypes } = useSelector((state: RootState) => state.users);
+  const { branches, roleTypes, loginUser } = useSelector((state: RootState) => state.users);
 
   const [otpVerifyForm, setOtpVerifyForm] = useState(false);
 

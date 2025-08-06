@@ -118,12 +118,14 @@ const usersSlice = createSlice({
       state.inboxGetterEmail = action.payload.inboxGetterEmail;
     },
     onlineUsers: (state, action) => {
+      console.log('action.payload.onlineUsers', action.payload.onlineUsers);
       const newUsers = Array.isArray(action.payload.onlineUsers)
         ? action.payload.onlineUsers
         : [action.payload.onlineUsers];
       const merged = [...state.onlineUsers, ...newUsers];
-    
-      state.onlineUsers = [...new Set(merged)];
+      
+      state.onlineUsers = !action.payload.findOfflineUser ? [...new Set(merged)] : [...action.payload.onlineUsers];
+      
     }
   },
 });
@@ -131,6 +133,6 @@ const usersSlice = createSlice({
 // Export actions & reducer
 export const { getUsers, isLoading, getLoginDetails, logoutUser,
   getUserDetail, uploadProfilePhoto, getAllStudents,
-  schoolGeneralInfo, getNotifications, inbox } =
+  schoolGeneralInfo, getNotifications, inbox, onlineUsers } =
   usersSlice.actions;
 export default usersSlice.reducer;

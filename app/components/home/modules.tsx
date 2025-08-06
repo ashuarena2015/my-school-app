@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  StatusBar,
   Pressable,
 } from "react-native";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
@@ -62,18 +61,18 @@ const Modules: FC = () => {
 
 const styles = StyleSheet.create({
   safeArea_container: {
-    // flex: 1,
-    paddingTop: StatusBar.currentHeight,
+    flex: 1,
   },
   module_container: {
     display: "flex",
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "space-around",
-    gap: 8,
+    justifyContent: "space-between",
   },
   module_box_wrapper: {
     alignItems: "center",
+    width: '20%',
+    marginBottom: 12,
     gap: 8,
   },
   label: {

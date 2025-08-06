@@ -23,16 +23,27 @@ const useWebSocket = (onMessage: CallbackFn, deps: any[] = []) => {
       onMessage(data); // Send to component
     });
 
+    socket.on('offlineUser', (data) => {
+      console.log("after offline, now online users:", data);
+      onMessage(data); // Send to component
+    })
+
     return () => {
       socket.disconnect();
     };
   }, deps);
 
   const checkOnlineUser = (email: string) => {
+    console.log('in websocket online email', email);
     socketRef.current?.emit('check_online', { email });
   };
 
-  return { checkOnlineUser };
+  const checkOfflineUser = (email: string) => {
+    console.log('in websocket offline email', email);
+    socketRef.current?.emit('check_offline', email);
+  };
+
+  return { checkOnlineUser, checkOfflineUser };
 };
 
 export default useWebSocket;

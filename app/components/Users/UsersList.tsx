@@ -17,6 +17,8 @@ interface StudentsListProps {
   navigation: any;
 }
 
+
+
 const UsersList: FC = () => {
 
   const dispatch = useDispatch<AppDispatch>();
@@ -26,7 +28,6 @@ const UsersList: FC = () => {
 
   const [userList, setUserList] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [onlineUsersStatus, setOnlineUsersStatus] = useState<any>([]);
 
   const getClassesMapItems = (roles: any[]) => {
     return roles?.map((item) => ({
@@ -100,6 +101,7 @@ const UsersList: FC = () => {
               renderItem={({ item }) => {
                 return (
                   <View style={{ ...styles.infoView }} key={item._id}>
+                    <View style={item?.online ? styles.onlineDot : styles.offlineDot} />
                     <View
                       style={{
                         display: "flex",
@@ -116,7 +118,6 @@ const UsersList: FC = () => {
                         style={{ ...styles.infoView_image }}
                       />
                       <View style={{ maxWidth: "80%" }}>
-                      {item?.online ? <AppText>Online</AppText> : ''}
                         <AppText
                           onPress={() => alert("hi")}
                           style={{ ...styles.full_name }}
@@ -183,6 +184,26 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     marginRight: 10,
   },
+  onlineDot: {
+    backgroundColor: '#16C47F',
+    width: 10,
+    height: 10,
+    borderRadius: 10,
+    position: 'absolute',
+    left: 14,
+    top: 10,
+    zIndex: 9
+  },
+  offlineDot: {
+    backgroundColor: '#F93827',
+    width: 10,
+    height: 10,
+    borderRadius: 10,
+    position: 'absolute',
+    left: 14,
+    top: 10,
+    zIndex: 9
+  }
 });
 
 export default UsersList;

@@ -59,10 +59,11 @@ const Home: FC<HomePageProps> = (props) => {
   }, [loginUser?.email, navigation]);
 
   const { checkOnlineUser } = useWebSocket((data) => {
+    console.log({data});
     dispatch({
       type: 'users/onlineUsers',
       payload: {
-        onlineUsers: data?.email
+        onlineUsers: data
       }
     })
   },[]);
@@ -71,6 +72,7 @@ const Home: FC<HomePageProps> = (props) => {
     if (loginUser?.email) {
       checkOnlineUser(loginUser.email);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loginUser?.email]);
 
   return (
@@ -82,8 +84,8 @@ const Home: FC<HomePageProps> = (props) => {
         <View style={{ flex: 1 }}>
           <View style={styles.profileInfoContainer}>
             <View>
-              <AppText>Good Morning!</AppText>
-              <AppText style={{ fontSize: 20, fontWeight: 'bold' }}>{`${loginUser?.firstName || loginUser?.userId} ${loginUser?.lastName || ''}`}</AppText>
+              <AppText>Good Morning,</AppText>
+              <AppText style={{ fontSize: 20, fontWeight: 'bold' }}>{`${loginUser?.firstName || loginUser?.userId} ${loginUser?.lastName || ''}`}!</AppText>
             </View>
             <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
               <Image
