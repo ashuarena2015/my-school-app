@@ -117,8 +117,7 @@ const usersSlice = createSlice({
       state.isInboxUpdate = action.payload.inboxUpdate;
       state.inboxGetterEmail = action.payload.inboxGetterEmail;
     },
-    onlineUsers: (state, action) => {
-      console.log('action.payload.onlineUsers', action.payload.onlineUsers);
+    onlineUsers: (state, action) => {      
       const newUsers = Array.isArray(action.payload.onlineUsers)
         ? action.payload.onlineUsers
         : [action.payload.onlineUsers];

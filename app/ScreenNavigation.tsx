@@ -33,7 +33,6 @@ const CustomDrawerContent = (props: DrawerContentComponentProps & { loginUser?: 
   const dispatch = useDispatch();
 
   const { checkOfflineUser } = useWebSocket((data) => {
-    console.log({checkOfflineUserData:data});
     dispatch({
       type: 'users/onlineUsers',
       payload: {
@@ -161,8 +160,6 @@ const AuthStack = () => (
 const ScreenNavigation: FC<ScreenNavigationProps> = ({ loginUser, isNotification }) => {
 
   const isAuthenticated = !!loginUser?.email;
-
-  console.log({loginUserScreen: loginUser});
   return (
     isAuthenticated ? <AuthenticatedDrawer loginUser={loginUser} isNotification={isNotification} /> : <AuthStack />
   );

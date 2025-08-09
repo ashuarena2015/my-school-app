@@ -59,7 +59,6 @@ const Home: FC<HomePageProps> = (props) => {
   }, [loginUser?.email, navigation]);
 
   const { checkOnlineUser } = useWebSocket((data) => {
-    console.log({data});
     dispatch({
       type: 'users/onlineUsers',
       payload: {

@@ -182,6 +182,22 @@ const api =
       if(dispatchType === 'setClassTeachers') {
         return { isClassTeachersUpdate: true };
       }
+      if(dispatchType === 'createChatRoom') {
+        return {
+          participants: response?.data?.participants,
+          chatRoomId: response?.data?.chatRoomId
+        }
+      }
+      if(dispatchType === 'getChatMessages') {
+        return {
+          getChatMessages: response?.data?.groupedMessages,
+        }
+      }
+      if(dispatchType === 'sendChatMessages') {
+        return {
+          chatInfo: response?.data?.chatInfo
+        }
+      }
     } catch (error: any) {
       if(error?.status !== 403) {
         dispatch({

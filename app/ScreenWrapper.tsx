@@ -8,6 +8,7 @@ import useWebSocket from "./components/RealTimeMessage/webSocket";
 
 import ScreenNavigation from "./ScreenNavigation";
 
+
 const ScreenWrapper = () => {
   const dispatch = useDispatch();
   const { loginUser, isNewNotification } = useSelector((state: RootState) => state.users);

@@ -17,13 +17,10 @@ interface LogoutProps {
 const Logout: FC<LogoutProps> = () => {
 
     const { loginUser } = useSelector((state: RootState) => state.users);
-    const { checkOfflineUser } = useWebSocket((data) => {
-        console.log({checkOfflineUserData:data});
-      },[]);
+    const { checkOfflineUser } = useWebSocket((data) => {},[]);
 
     useEffect(() => {
-        return () => {
-            console.log('logout wala useEffect', loginUser);
+        return () => {            
             checkOfflineUser(loginUser.email || '');
         }
       // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -15,16 +15,16 @@ const useWebSocket = (onMessage: CallbackFn, deps: any[] = []) => {
     socketRef.current = socket;
 
     socket.on('connect', () => {
-      console.log('Connected to WebSocket');
+      //console.log('Connected to WebSocket');
     });
 
     socket.on('onlineUser', (data) => {
-      console.log("onlineUser received:", data);
+      // console.log("onlineUser received:", data);
       onMessage(data); // Send to component
     });
 
     socket.on('offlineUser', (data) => {
-      console.log("after offline, now online users:", data);
+      // console.log("after offline, now online users:", data);
       onMessage(data); // Send to component
     })
 
@@ -34,12 +34,12 @@ const useWebSocket = (onMessage: CallbackFn, deps: any[] = []) => {
   }, deps);
 
   const checkOnlineUser = (email: string) => {
-    console.log('in websocket online email', email);
+    // console.log('in websocket online email', email);
     socketRef.current?.emit('check_online', { email });
   };
 
   const checkOfflineUser = (email: string) => {
-    console.log('in websocket offline email', email);
+    // console.log('in websocket offline email', email);
     socketRef.current?.emit('check_offline', email);
   };
 

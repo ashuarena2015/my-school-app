@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState, useCallback } from "react";
-import { FlatList, Image, StyleSheet, View } from "react-native";
+import { FlatList, Image, Pressable, StyleSheet, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,13 +13,13 @@ import UserTypeDropdown from "./UserType";
 // eslint-disable-next-line import/no-unresolved
 import { API_URL, PHOTO_URL } from "@env";
 
-interface StudentsListProps {
-  navigation: any;
+interface StudentsListProps {  
+  createChatRoom?: Function;
 }
 
 
 
-const UsersList: FC = () => {
+const UsersList: FC<StudentsListProps> = ({ createChatRoom }) => {
 
   const dispatch = useDispatch<AppDispatch>();
   // const router = useRouter();
@@ -78,7 +78,6 @@ const UsersList: FC = () => {
 
   const getItems = useCallback(() => getClassesMapItems(roleTypes), [roleTypes]);
 
-  console.log({userList, onlineUsers});
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ height: '100%' }} edges={["top"]}>
@@ -132,7 +131,11 @@ const UsersList: FC = () => {
                         </AppText>
                       </View>
                     </View>
-                    <Icon name="arrow-right" size={16} color="#333" />
+                    <Pressable
+                      onPress={() => createChatRoom?.(item._id)}
+                    >
+                      <Icon name="arrow-right" size={16} color="#333" />
+                    </Pressable>
                   </View>
                 );
               }}

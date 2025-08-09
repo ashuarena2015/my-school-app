@@ -1,46 +1,43 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useCallback, useState } from "react";
+import { useFocusEffect } from '@react-navigation/native';
 import {
   View,
-  TextInput,
-  Button,
-  FlatList,
-  Text,
-  SafeAreaView,
   StyleSheet,
 } from "react-native";
-import useWebSocket from "../RealTimeMessage/webSocket";
-
+import { useSelector } from "react-redux";
 import UsersList from "../Users/UsersList";
+import ChatRoom from "./ChatRoom";
+import { RootState } from "@/app/services/store";
 
 const Chat = () => {
-  const [message, setMessage] = useState("");
-  const [chatMessages, setChatMessages] = useState<any[]>([]);
 
-  const { sendMessage } = useWebSocket((data) => {
-    console.log("Received:", data);
-    const msgData = {
-      message: data.message,
-      sender: data.sender || "UserB", // Default sender if not provided
-      time: new Date().toLocaleTimeString(),
-    };
-    setChatMessages((prev) => [...prev, msgData]);
-  });
+  const { loginUser } = useSelector((state: RootState) => state.users);
+  const [showChatRoom, setShowChatRoom] = useState(false);
+  const [chatRoomData, setChatRoomData] = useState({});
 
-  const handleSend = () => {
-    const msgData = {
-      message,
-      sender: "UserA", // Replace with actual user
-      time: new Date().toLocaleTimeString(),
-    };
-
-    sendMessage(msgData); // Send over socket
-    setChatMessages((prev) => [...prev, msgData]); // Add locally
-    setMessage(""); // Clear input
+  const createChatRoom = (data: any) => {
+    if(loginUser?._id !== data) {
+      setChatRoomData([
+        data,
+        loginUser?._id
+      ]);
+      setShowChatRoom(true);
+    } else {
+      alert('You can not chat with your self!');
+    }
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        setShowChatRoom(false);
+      }
+    }, [])
+  );
 
   return (
     <View style={styles.container}>
-        <UsersList />
+        {!showChatRoom ? <UsersList createChatRoom={createChatRoom} /> : <ChatRoom chatRoomData={chatRoomData} sender={loginUser._id}  />}
       {/* <FlatList
         data={chatMessages}
         renderItem={({ item }) => (
